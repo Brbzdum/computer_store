@@ -15,6 +15,20 @@ public class UserService {
     private UserRepository userRepository;
 
     public User createUser(User user) {
+        // Проверка уникальности email
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email уже используется!");
+        }
+
+        // Проверка уникальности имени пользователя
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Имя пользователя уже занято!");
+        }
+
+        // проверка длины пароля
+        if (user.getPassword().length() < 6) {
+            throw new IllegalArgumentException("Пароль должен быть длиной не менее 6 символов!");
+        }
         return userRepository.save(user);
     }
 
