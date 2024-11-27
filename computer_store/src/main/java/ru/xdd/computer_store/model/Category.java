@@ -3,16 +3,15 @@ package ru.xdd.computer_store.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Data
-@Entity
-@Table(name = "categories")
+@Data // Генерация стандартных методов
+@Entity // Сущность для базы данных
+@Table(name = "categories") // Название таблицы
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Автогенерация значения ID
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, unique = true, length = 100) // Уникальное обязательное поле
     private String name;
 }
-
