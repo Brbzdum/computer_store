@@ -18,12 +18,12 @@ public class UserController {
 
     @GetMapping
     public List<User> getAllUsers() {
-        return userService.findAllUsers();
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        return userService.findUserByUsername(username)
+        return userService.getUserByUsername(username)
                 .map(user -> ResponseEntity.ok(user))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -34,7 +34,7 @@ public class UserController {
             User newUser = userService.createUser(user);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(null);  // Возвращаем 400, если данные некорректны
         }
     }
 

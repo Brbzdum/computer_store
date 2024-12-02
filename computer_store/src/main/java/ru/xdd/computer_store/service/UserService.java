@@ -1,6 +1,7 @@
 package ru.xdd.computer_store.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.xdd.computer_store.model.User;
@@ -15,6 +16,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;  // Шифрование паролей
+
     // Создание нового пользователя
     @Transactional
     public User createUser(User user) {
@@ -25,6 +29,9 @@ public class UserService {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email уже используется!");
         }
+
+        // Шифрование пароля перед сохранением
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -49,9 +56,16 @@ public class UserService {
     @Transactional
     public User updateUser(Long id, User updatedUser) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+
+        // Обновляем поля
         user.setUsername(updatedUser.getUsername());
         user.setEmail(updatedUser.getEmail());
-        user.setPassword(updatedUser.getPassword()); // Это должно быть зашифровано
+
+        // Если пароль был изменён, то шифруем его
+        if (!updatedUser.getPassword().equals(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+
         return userRepository.save(user);
     }
 }

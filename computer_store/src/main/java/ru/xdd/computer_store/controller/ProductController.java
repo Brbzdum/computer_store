@@ -8,6 +8,7 @@ import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.service.ProductService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
@@ -16,27 +17,32 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    // Получение всех продуктов
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.findAllProducts();
     }
 
+    // Получение продукта по ID
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return productService.findProductById(id)
-                .map(product -> ResponseEntity.ok(product))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Product> product = productService.findProductById(id); // Получаем Optional<Product>
+        return product
+                .map(ResponseEntity::ok)  // Если продукт найден, возвращаем 200 OK с продуктом
+                .orElseGet(() -> ResponseEntity.notFound().build());  // Если не найден, возвращаем 404 Not Found
     }
 
+    // Создание нового продукта
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product newProduct = productService.createProduct(product);
-        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
+        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);  // Возвращаем созданный продукт с статусом 201
     }
 
+    // Удаление продукта по ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+        productService.deleteProduct(id);  // Удаляем продукт
+        return ResponseEntity.noContent().build();  // Возвращаем статус 204 No Content
     }
 }

@@ -22,34 +22,16 @@ public class ProductService {
     }
 
     // Получение всех продуктов
-    public List<Product> getAllProducts() {
+    public List<Product> findAllProducts() {
         return productRepository.findAll();
     }
 
-    // Поиск продукта по ID
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+    // Получение продукта по ID
+    public Optional<Product> findProductById(Long id) {
+        return productRepository.findById(id);  // Возвращаем Optional<Product>
     }
 
-    // Поиск продукта по категории
-    public List<Product> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
-    }
-
-    // Обновление продукта
-    @Transactional
-    public Product updateProduct(Long id, Product updatedProduct) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Продукт не найден"));
-        product.setName(updatedProduct.getName());
-        product.setDescription(updatedProduct.getDescription());
-        product.setPrice(updatedProduct.getPrice());
-        product.setStock(updatedProduct.getStock());
-        product.setManufacturer(updatedProduct.getManufacturer());
-        product.setCategory(updatedProduct.getCategory());
-        return productRepository.save(product);
-    }
-
-    // Удаление продукта
+    // Удаление продукта по ID
     @Transactional
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
