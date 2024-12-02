@@ -6,7 +6,6 @@ import ru.xdd.computer_store.model.Category;
 import ru.xdd.computer_store.repository.CategoryRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -18,11 +17,6 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public Optional<Category> findCategoryById(Long id) {
-        return categoryRepository.findById(id);
-    }
-
-    public List<Category> findAllCategories() {
         return categoryRepository.findAll();
     }
 
