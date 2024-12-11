@@ -1,0 +1,185 @@
+<!-- manufacturers.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Производители - Компьютерный Магазин</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Подключение пользовательских стилей -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Навигационная панель -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">Компьютерный Магазин</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="categories.html">Категории</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="manufacturers.html">Производители</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="products.html">Продукты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html">Пользователи</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Контейнер для содержимого -->
+<div class="container mt-4">
+    <h2>Производители</h2>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addManufacturerModal">Добавить Производителя</button>
+    <table class="table table-bordered" id="manufacturersTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Данные будут загружены через JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Модальное окно для добавления производителя -->
+<div class="modal fade" id="addManufacturerModal" tabindex="-1" aria-labelledby="addManufacturerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addManufacturerForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addManufacturerModalLabel">Добавить Производителя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="manufacturerName" class="form-label">Название</label>
+                        <input type="text" class="form-control" id="manufacturerName" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования производителя -->
+<div class="modal fade" id="editManufacturerModal" tabindex="-1" aria-labelledby="editManufacturerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editManufacturerForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editManufacturerModalLabel">Редактировать Производителя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editManufacturerId">
+                    <div class="mb-3">
+                        <label for="editManufacturerName" class="form-label">Название</label>
+                        <input type="text" class="form-control" id="editManufacturerName" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Обновить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Подключение Bootstrap JS и зависимостей -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Подключение пользовательских скриптов -->
+<script src="scripts.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadManufacturers();
+
+        // Функция загрузки производителей
+        async function loadManufacturers() {
+            const manufacturers = await getData('manufacturers');
+            const tbody = document.querySelector('#manufacturersTable tbody');
+            tbody.innerHTML = '';
+            manufacturers.forEach(manufacturer => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${manufacturer.id}</td>
+                        <td>${manufacturer.name}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2" onclick="openEditModal(${manufacturer.id}, '${manufacturer.name}')">Редактировать</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteManufacturer(${manufacturer.id})">Удалить</button>
+                        </td>
+                    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Обработчик формы добавления производителя
+        document.getElementById('addManufacturerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('manufacturerName').value.trim();
+            if (name) {
+                const newManufacturer = await postData('manufacturers', { name });
+                if (newManufacturer) {
+                    loadManufacturers();
+                    document.getElementById('addManufacturerForm').reset();
+                    const addModal = bootstrap.Modal.getInstance(document.getElementById('addManufacturerModal'));
+                    addModal.hide();
+                }
+            }
+        });
+
+        // Обработчик формы редактирования производителя
+        document.getElementById('editManufacturerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editManufacturerId').value;
+            const name = document.getElementById('editManufacturerName').value.trim();
+            if (id && name) {
+                const updatedManufacturer = await putData(`manufacturers/${id}`, { name });
+                if (updatedManufacturer) {
+                    loadManufacturers();
+                    document.getElementById('editManufacturerForm').reset();
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editManufacturerModal'));
+                    editModal.hide();
+                }
+            }
+        });
+    });
+
+    // Функция открытия модального окна редактирования производителя
+    function openEditModal(id, name) {
+        document.getElementById('editManufacturerId').value = id;
+        document.getElementById('editManufacturerName').value = name;
+        const editModal = new bootstrap.Modal(document.getElementById('editManufacturerModal'));
+        editModal.show();
+    }
+
+    // Функция удаления производителя
+    async function deleteManufacturer(id) {
+        if (confirm('Вы уверены, что хотите удалить этого производителя?')) {
+            const success = await deleteData(`manufacturers/${id}`);
+            if (success) {
+                loadManufacturers();
+            }
+        }
+    }
+</script>
+</body>
+</html>

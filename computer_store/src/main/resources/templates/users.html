@@ -1,0 +1,239 @@
+<!-- users.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователи - Компьютерный Магазин</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Подключение пользовательских стилей -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Навигационная панель -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">Компьютерный Магазин</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="categories.html">Категории</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="manufacturers.html">Производители</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="products.html">Продукты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="users.html">Пользователи</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Контейнер для содержимого -->
+<div class="container mt-4">
+    <h2>Пользователи</h2>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">Добавить Пользователя</button>
+    <table class="table table-bordered" id="usersTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя пользователя</th>
+            <th>Email</th>
+            <th>Роль</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Данные будут загружены через JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Модальное окно для добавления пользователя -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addUserForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Добавить Пользователя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Поля формы -->
+                    <div class="mb-3">
+                        <label for="userUsername" class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control" id="userUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="userEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userPassword" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="userPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userRole" class="form-label">Роль</label>
+                        <select class="form-select" id="userRole" required>
+                            <option value="" disabled selected>Выберите роль</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="CLIENT">CLIENT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования пользователя -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editUserForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Редактировать Пользователя</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId">
+                    <!-- Поля формы -->
+                    <div class="mb-3">
+                        <label for="editUserUsername" class="form-label">Имя пользователя</label>
+                        <input type="text" class="form-control" id="editUserUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editUserEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserPassword" class="form-label">Пароль</label>
+                        <input type="password" class="form-control" id="editUserPassword">
+                        <small class="text-muted">Оставьте поле пустым, если не хотите менять пароль.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserRole" class="form-label">Роль</label>
+                        <select class="form-select" id="editUserRole" required>
+                            <option value="" disabled selected>Выберите роль</option>
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="CLIENT">CLIENT</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Обновить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Подключение Bootstrap JS и зависимостей -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Подключение пользовательских скриптов -->
+<script src="scripts.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUsers();
+
+        // Функция загрузки пользователей
+        async function loadUsers() {
+            const users = await getData('users');
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = '';
+            users.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>${user.username}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2" onclick="openEditModal(${user.id}, '${user.username}', '${user.email}', '${user.role}')">Редактировать</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Удалить</button>
+                        </td>
+                    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Обработчик формы добавления пользователя
+        document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('userUsername').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const password = document.getElementById('userPassword').value.trim();
+            const role = document.getElementById('userRole').value;
+
+            if (username && email && password && role) {
+                const newUser = await postData('users', { username, email, password, role });
+                if (newUser) {
+                    loadUsers();
+                    document.getElementById('addUserForm').reset();
+                    const addModal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                    addModal.hide();
+                }
+            }
+        });
+
+        // Обработчик формы редактирования пользователя
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editUserId').value;
+            const username = document.getElementById('editUserUsername').value.trim();
+            const email = document.getElementById('editUserEmail').value.trim();
+            const password = document.getElementById('editUserPassword').value.trim();
+            const role = document.getElementById('editUserRole').value;
+
+            if (id && username && email && role) {
+                const updateData = { username, email, role };
+                if (password) {
+                    updateData.password = password;
+                }
+                const updatedUser = await putData(`users/${id}`, updateData);
+                if (updatedUser) {
+                    loadUsers();
+                    document.getElementById('editUserForm').reset();
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                    editModal.hide();
+                }
+            }
+        });
+    });
+
+    // Функция открытия модального окна редактирования пользователя
+    function openEditModal(id, username, email, role) {
+        document.getElementById('editUserId').value = id;
+        document.getElementById('editUserUsername').value = username;
+        document.getElementById('editUserEmail').value = email;
+        document.getElementById('editUserRole').value = role;
+        document.getElementById('editUserPassword').value = ''; // Очищаем поле пароля
+        const editModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        editModal.show();
+    }
+
+    // Функция удаления пользователя
+    async function deleteUser(id) {
+        if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+            const success = await deleteData(`users/${id}`);
+            if (success) {
+                loadUsers();
+            }
+        }
+    }
+</script>
+</body>
+</html>
