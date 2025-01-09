@@ -1,7 +1,7 @@
 package ru.xdd.computer_store.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.xdd.computer_store.model.Role;
+import ru.xdd.computer_store.model.enums.Role;
 
 import java.util.Optional;
 

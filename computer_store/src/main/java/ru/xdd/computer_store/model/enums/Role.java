@@ -1,4 +1,4 @@
-package ru.xdd.computer_store.model;
+package ru.xdd.computer_store.model.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 

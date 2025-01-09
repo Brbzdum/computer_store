@@ -1,46 +1,112 @@
 package ru.xdd.computer_store.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.xdd.computer_store.model.User;
 import ru.xdd.computer_store.service.UserService;
 
-import java.util.List;
+import java.security.Principal;
 
-@RestController
-@RequestMapping("/api/users")
+@Controller
+@RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        return userService.getUserByUsername(username)
-                .map(user -> ResponseEntity.ok(user))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        try {
-            User newUser = userService.createUser(user);
-            return new ResponseEntity<>(newUser, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(null);  // Возвращаем 400, если данные некорректны
+    /**
+     * Страница входа.
+     */
+    @GetMapping("/login")
+    public String login(Principal principal, Model model) {
+        if (principal != null) {
+            model.addAttribute("user", userService.getUserByPrincipal(principal));
+        } else {
+            model.addAttribute("user", new User());
         }
+        return "login";
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    /**
+     * Профиль текущего пользователя.
+     */
+    @GetMapping("/profile")
+    public String profile(Principal principal, Model model) {
+        User user = userService.getUserByPrincipal(principal);
+        model.addAttribute("user", user);
+        return "profile";
+    }
+
+    /**
+     * Информация о другом пользователе.
+     */
+    @GetMapping("/user/{username}")
+    public String userInfo(@PathVariable Long id, Model model, Principal principal) {
+        User user = userService.getUserByUsername(id.toString()).orElse(null); // Заменяем username на id
+        if (user == null) {
+            model.addAttribute("errorMessage", "Пользователь не найден.");
+            return "error";
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("userByPrincipal", userService.getUserByPrincipal(principal));
+        return "user-info";
+    }
+
+    /**
+     * Страница регистрации.
+     */
+    @GetMapping("/registration")
+    public String registration(Model model) {
+        model.addAttribute("user", new User());
+        return "registration";
+    }
+
+    /**
+     * Обработка регистрации.
+     */
+    @PostMapping("/registration")
+    public String registerUser(@ModelAttribute @Valid User user,
+                               BindingResult bindingResult,
+                               Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", "Некорректно заполнены поля формы");
+            return "registration";
+        }
+
+        boolean created = userService.createUser(user);
+        if (!created) {
+            model.addAttribute("errorMessage", "Пользователь с таким email уже существует!");
+            return "registration";
+        }
+        model.addAttribute("message", "На вашу почту отправлено письмо для подтверждения регистрации.");
+        return "redirect:/users/login";
+    }
+
+    /**
+     * Активация пользователя по коду.
+     */
+    @GetMapping("/activate/{code}")
+    public String activateUser(@PathVariable String code, Model model) {
+        boolean activated = userService.activateUser(code);
+        if (activated) {
+            model.addAttribute("message", "Ваш аккаунт успешно активирован!");
+        } else {
+            model.addAttribute("message", "Код активации недействителен!");
+        }
+        return "login";
+    }
+
+    /**
+     * Удаление пользователя (админский функционал).
+     */
+    @PostMapping("/delete/{id}")
+    public String deleteUser(@PathVariable Long id, Model model) {
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        model.addAttribute("message", "Пользователь успешно удалён.");
+        return "redirect:/users";
     }
 }
