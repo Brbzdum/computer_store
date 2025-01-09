@@ -5,27 +5,27 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
-@Data // Генерация стандартных методов
-@Entity // Сущность для базы данных
-@Table(name = "orders") // Название таблицы
+@Data
+@Entity
+@Table(name = "orders")
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Автогенерация значения ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Ленивая загрузка данных пользователя
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product; // Связь с одним товаром
+
     @Column(nullable = false)
-    private LocalDateTime orderDate; // Дата оформления заказа
+    private LocalDateTime orderDate;
 
     @Column(nullable = false)
     private BigDecimal totalPrice; // Общая стоимость заказа
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true) // Связь с деталями заказа
-    private List<OrderDetail> orderDetails;
 }

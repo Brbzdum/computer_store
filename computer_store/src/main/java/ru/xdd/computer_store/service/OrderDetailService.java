@@ -2,7 +2,6 @@ package ru.xdd.computer_store.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.xdd.computer_store.model.OrderDetail;
 import ru.xdd.computer_store.repository.OrderDetailRepository;
 
 import java.util.List;

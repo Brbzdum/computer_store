@@ -6,37 +6,56 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Data // Генерация стандартных методов
-@Entity // Сущность для базы данных
-@Table(name = "products") // Название таблицы
+@Data
+@Entity
+@Table(name = "products")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Автогенерация значения ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100) // Уникальное и обязательное поле
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(columnDefinition = "TEXT") // Поле для описания товара
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false) // Обязательное поле
-    private BigDecimal price; // Используем BigDecimal для точных вычислений с деньгами
+    @Column(nullable = false)
+    private BigDecimal price;
 
-    @Column(nullable = false) // Обязательное поле
-    private int stock; // Количество товара на складе
+    @Column(nullable = false)
+    private BigDecimal magPrice; // Цена магазина (например, закупочная)
 
-    @ManyToOne(fetch = FetchType.LAZY) // Ленивая загрузка данных производителя
+    @Column(nullable = false)
+    private int stock;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manufacturer_id", nullable = false)
     private Manufacturer manufacturer;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Ленивая загрузка данных категории
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+    private List<Image> images = new ArrayList<>();
+
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    private Long previewImageId;
+
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    @CreationTimestamp // Автоматическое создание времени
     private LocalDateTime createdAt;
+
+    public void addImageToProduct(Image image) {
+        image.setProduct(this);
+        images.add(image);
+    }
 }
