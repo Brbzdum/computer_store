@@ -21,10 +21,17 @@ public class Sale {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Пользователь, купивший товар
+    private User user; // Покупатель товара
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private User seller; // Продавец товара
 
     @Column(nullable = false)
     private BigDecimal price; // Цена продажи
+
+    @Column(name = "purchase_price", nullable = false)
+    private BigDecimal purchasePrice; // Закупочная цена
 
     @Column(nullable = false)
     private LocalDateTime saleDate; // Дата продажи

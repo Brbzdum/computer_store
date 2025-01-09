@@ -1,0 +1,303 @@
+<!-- products.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Продукты - Компьютерный Магазин</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Подключение пользовательских стилей -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Навигационная панель -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">Компьютерный Магазин</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="categories.html">Категории</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="manufacturers.html">Производители</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="products.html">Продукты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="users.html">Пользователи</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Контейнер для содержимого -->
+<div class="container mt-4">
+    <h2>Продукты</h2>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">Добавить Продукт</button>
+    <table class="table table-bordered" id="productsTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Цена</th>
+            <th>Количество</th>
+            <th>Производитель</th>
+            <th>Категория</th>
+            <th>Дата Создания</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Данные будут загружены через JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Модальное окно для добавления продукта -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addProductForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProductModalLabel">Добавить Продукт</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Поля формы -->
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Название</label>
+                        <input type="text" class="form-control" id="productName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productDescription" class="form-label">Описание</label>
+                        <textarea class="form-control" id="productDescription" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productPrice" class="form-label">Цена</label>
+                        <input type="number" step="0.01" class="form-control" id="productPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productStock" class="form-label">Количество</label>
+                        <input type="number" class="form-control" id="productStock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productManufacturer" class="form-label">Производитель</label>
+                        <select class="form-select" id="productManufacturer" required>
+                            <!-- Опции будут загружены через JavaScript -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productCategory" class="form-label">Категория</label>
+                        <select class="form-select" id="productCategory" required>
+                            <!-- Опции будут загружены через JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования продукта -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editProductForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductModalLabel">Редактировать Продукт</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editProductId">
+                    <!-- Поля формы -->
+                    <div class="mb-3">
+                        <label for="editProductName" class="form-label">Название</label>
+                        <input type="text" class="form-control" id="editProductName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductDescription" class="form-label">Описание</label>
+                        <textarea class="form-control" id="editProductDescription" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductPrice" class="form-label">Цена</label>
+                        <input type="number" step="0.01" class="form-control" id="editProductPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductStock" class="form-label">Количество</label>
+                        <input type="number" class="form-control" id="editProductStock" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductManufacturer" class="form-label">Производитель</label>
+                        <select class="form-select" id="editProductManufacturer" required>
+                            <!-- Опции будут загружены через JavaScript -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProductCategory" class="form-label">Категория</label>
+                        <select class="form-select" id="editProductCategory" required>
+                            <!-- Опции будут загружены через JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Обновить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Подключение Bootstrap JS и зависимостей -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Подключение пользовательских скриптов -->
+<script src="scripts.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProducts();
+        loadManufacturersOptions();
+        loadCategoriesOptions();
+
+        // Функция загрузки продуктов
+        async function loadProducts() {
+            const products = await getData('products');
+            const tbody = document.querySelector('#productsTable tbody');
+            tbody.innerHTML = '';
+            products.forEach(product => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.description || ''}</td>
+                        <td>${product.price}</td>
+                        <td>${product.stock}</td>
+                        <td>${product.manufacturer.name}</td>
+                        <td>${product.category.name}</td>
+                        <td>${new Date(product.createdAt).toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning me-2" onclick="openEditModal(${product.id}, '${product.name}', '${product.description || ''}', ${product.price}, ${product.stock}, ${product.manufacturer.id}, ${product.category.id})">Редактировать</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})">Удалить</button>
+                        </td>
+                    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Функции загрузки опций производителей и категорий
+        async function loadManufacturersOptions() {
+            const manufacturers = await getData('manufacturers');
+            const select = document.querySelectorAll('#productManufacturer, #editProductManufacturer');
+            select.forEach(selectElement => {
+                selectElement.innerHTML = '<option value="" disabled selected>Выберите производителя</option>';
+                manufacturers.forEach(m => {
+                    selectElement.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+                });
+            });
+        }
+
+        async function loadCategoriesOptions() {
+            const categories = await getData('categories');
+            const select = document.querySelectorAll('#productCategory, #editProductCategory');
+            select.forEach(selectElement => {
+                selectElement.innerHTML = '<option value="" disabled selected>Выберите категорию</option>';
+                categories.forEach(c => {
+                    selectElement.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+            });
+        }
+
+        // Обработчик формы добавления продукта
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('productName').value.trim();
+            const description = document.getElementById('productDescription').value.trim();
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const stock = parseInt(document.getElementById('productStock').value);
+            const manufacturerId = parseInt(document.getElementById('productManufacturer').value);
+            const categoryId = parseInt(document.getElementById('productCategory').value);
+
+            if (name && !isNaN(price) && !isNaN(stock) && manufacturerId && categoryId) {
+                const newProduct = await postData('products', {
+                    name,
+                    description,
+                    price,
+                    stock,
+                    manufacturerId,
+                    categoryId
+                });
+                if (newProduct) {
+                    loadProducts();
+                    document.getElementById('addProductForm').reset();
+                    const addModal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+                    addModal.hide();
+                }
+            }
+        });
+
+        // Обработчик формы редактирования продукта
+        document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editProductId').value;
+            const name = document.getElementById('editProductName').value.trim();
+            const description = document.getElementById('editProductDescription').value.trim();
+            const price = parseFloat(document.getElementById('editProductPrice').value);
+            const stock = parseInt(document.getElementById('editProductStock').value);
+            const manufacturerId = parseInt(document.getElementById('editProductManufacturer').value);
+            const categoryId = parseInt(document.getElementById('editProductCategory').value);
+
+            if (id && name && !isNaN(price) && !isNaN(stock) && manufacturerId && categoryId) {
+                const updatedProduct = await putData(`products/${id}`, {
+                    name,
+                    description,
+                    price,
+                    stock,
+                    manufacturerId,
+                    categoryId
+                });
+                if (updatedProduct) {
+                    loadProducts();
+                    document.getElementById('editProductForm').reset();
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
+                    editModal.hide();
+                }
+            }
+        });
+    });
+
+    // Функция открытия модального окна редактирования продукта
+    function openEditModal(id, name, description, price, stock, manufacturerId, categoryId) {
+        document.getElementById('editProductId').value = id;
+        document.getElementById('editProductName').value = name;
+        document.getElementById('editProductDescription').value = description;
+        document.getElementById('editProductPrice').value = price;
+        document.getElementById('editProductStock').value = stock;
+        document.getElementById('editProductManufacturer').value = manufacturerId;
+        document.getElementById('editProductCategory').value = categoryId;
+        const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+        editModal.show();
+    }
+
+    // Функция удаления продукта
+    async function deleteProduct(id) {
+        if (confirm('Вы уверены, что хотите удалить этот продукт?')) {
+            const success = await deleteData(`products/${id}`);
+            if (success) {
+                loadProducts();
+            }
+        }
+    }
+</script>
+</body>
+</html>
