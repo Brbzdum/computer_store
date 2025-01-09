@@ -13,8 +13,8 @@ public class Category {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
-    private String name;
+    private String name; // Название категории (например, "Ноутбуки")
 
-    @Column(length = 255) // Поле для описания категории
-    private String description;
+    @Column(length = 255)
+    private String description; // Описание категории
 }

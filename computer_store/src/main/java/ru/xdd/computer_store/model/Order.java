@@ -17,14 +17,14 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // Пользователь, оформивший заказ
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product; // Связь с одним товаром
+    private Product product; // Товар в заказе
 
     @Column(nullable = false)
-    private LocalDateTime orderDate;
+    private LocalDateTime orderDate; // Дата оформления заказа
 
     @Column(nullable = false)
     private BigDecimal totalPrice; // Общая стоимость заказа

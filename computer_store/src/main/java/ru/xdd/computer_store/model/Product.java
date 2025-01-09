@@ -19,40 +19,40 @@ public class Product {
     private Long id;
 
     @Column(nullable = false, length = 100)
-    private String name;
+    private String brand; // Бренд товара (например, ASUS, HP)
+
+    @Column(nullable = false, length = 100)
+    private String title; // Название товара
 
     @Column(columnDefinition = "TEXT")
-    private String description;
+    private String description; // Описание товара
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private BigDecimal price; // Цена товара
 
     @Column(nullable = false)
-    private BigDecimal magPrice; // Цена магазина (например, закупочная)
-
-    @Column(nullable = false)
-    private int stock;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "manufacturer_id", nullable = false)
-    private Manufacturer manufacturer;
+    private BigDecimal magPrice; // Закупочная цена
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private Category category; // Категория товара
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manufacturer_id", nullable = false)
+    private Manufacturer manufacturer; // Производитель товара
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
-    private List<Image> images = new ArrayList<>();
+    private List<Image> images = new ArrayList<>(); // Список изображений товара
 
-    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // Пользователь, добавивший товар
 
-    private Long previewImageId;
+    private Long previewImageId; // ID главного изображения
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    @Column(updatable = false)
+    private LocalDateTime createdAt; // Дата создания товара
 
     public void addImageToProduct(Image image) {
         image.setProduct(this);

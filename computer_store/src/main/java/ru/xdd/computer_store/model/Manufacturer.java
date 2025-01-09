@@ -13,8 +13,8 @@ public class Manufacturer {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 100)
-    private String name;
+    private String name; // Название производителя (например, "ASUS")
 
-    @Column(length = 255) // Дополнительное поле для описания производителя
-    private String description;
+    @Column(length = 255)
+    private String description; // Описание производителя
 }

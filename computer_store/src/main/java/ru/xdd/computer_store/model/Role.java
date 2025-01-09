@@ -1,16 +1,12 @@
 package ru.xdd.computer_store.model;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
-@Data
-@Entity
-@Table(name = "roles")
-public class Role {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public enum Role implements GrantedAuthority {
+    ROLE_USER, ROLE_ADMIN;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }
