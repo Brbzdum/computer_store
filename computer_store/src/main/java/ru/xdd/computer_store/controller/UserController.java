@@ -52,17 +52,14 @@ public class UserController {
     /**
      * Информация о другом пользователе.
      */
-    @GetMapping("/user/{username}")
-    public String userInfo(@PathVariable Long id, Model model, Principal principal) {
-        User user = userService.getUserByUsername(id.toString()).orElse(null); // Заменяем username на id
-        if (user == null) {
-            model.addAttribute("errorMessage", "Пользователь не найден.");
-            return "error";
-        }
+    @GetMapping("/user/{user}")
+    public String userInfo(@PathVariable("user") User user, Model model, Principal principal) {
         model.addAttribute("user", user);
         model.addAttribute("userByPrincipal", userService.getUserByPrincipal(principal));
+        model.addAttribute("products", user.getProducts());
         return "user-info";
     }
+
 
     /**
      * Страница регистрации.

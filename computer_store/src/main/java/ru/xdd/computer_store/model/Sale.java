@@ -35,6 +35,9 @@ public class Sale {
     @Column(nullable = false)
     private BigDecimal purchasePrice;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private LocalDateTime saleDate;

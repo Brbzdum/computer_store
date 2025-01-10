@@ -32,9 +32,9 @@ public class User implements UserDetails {
     @Email(message = "Некорректный формат email")
     private String email;
 
-    @Column(nullable = false, unique = true, length = 15)
+    @Column(nullable = false, unique = true, length = 20)
     @NotBlank(message = "Номер телефона не может быть пустым")
-    @Size(max = 15, message = "Номер телефона не может содержать больше 15 символов")
+    @Size(max = 20, message = "Номер телефона не может содержать больше 20 символов")
     @Pattern(regexp = "^(\\+7|7|8)\\(?\\d{3}\\)?\\d{3}-\\d{2}-\\d{2}$", message = "Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX")
     private String phoneNumber;
 
@@ -59,6 +59,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
