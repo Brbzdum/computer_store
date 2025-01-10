@@ -44,7 +44,7 @@ public class AdminController {
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
-        model.addAttribute("sales", saleService.getAllSales());
+        model.addAttribute("sales", saleService.list());
         model.addAttribute("user", userService.getUserByPrincipal(principal));
         return "admin";
     }
@@ -57,8 +57,7 @@ public class AdminController {
 
     @PostMapping("/admin/user/edit")
     public String editUserRoles(@RequestParam("userId") Long userId, @RequestParam Map<String, String> form) {
-        User user = userService.getUserById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден"));
+        User user = userService.getUserById(userId);
         userService.changeUserRoles(user, form);
         return "redirect:/admin";
     }
@@ -77,11 +76,9 @@ public class AdminController {
         }
 
         if (product.getPrice() != null) {
-            product.setMagPrice(product.getPrice().multiply(BigDecimal.valueOf(1.5)));
+            product.setPurchasePrice(product.getPrice().multiply(BigDecimal.valueOf(1.5)));
         }
-        if (product.getStatus() == null) {
-            product.setStatus("В продаже");
-        }
+
 
         productService.saveProductWithImages(principal, product, file1, file2, file3);
         return "redirect:/admin";
@@ -91,31 +88,55 @@ public class AdminController {
     public void exportToExcel(HttpServletResponse response,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) throws IOException {
-        List<Sale> sales = saleService.list()
-                .stream()
+        List<Sale> sales = saleService.list();
+        sales = sales.stream()
                 .filter(sale -> sale.getSaleDate().isAfter(startDate) && sale.getSaleDate().isBefore(endDate))
                 .collect(Collectors.toList());
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sales");
+
+        // Заголовки
         Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("Продукт");
-        headerRow.createCell(1).setCellValue("Покупатель");
-        headerRow.createCell(2).setCellValue("Цена");
-        headerRow.createCell(3).setCellValue("Дата продажи");
+        headerRow.createCell(0).setCellValue("Товар");
+        headerRow.createCell(1).setCellValue("Производитель");
+        headerRow.createCell(2).setCellValue("Покупатель");
+        headerRow.createCell(3).setCellValue("Закупочная цена");
+        headerRow.createCell(4).setCellValue("Цена продажи");
+        headerRow.createCell(5).setCellValue("Дата продажи");
+        headerRow.createCell(6).setCellValue("Прибыль");
 
         int rowNum = 1;
+        double totalProfit = 0.0;
+
         for (Sale sale : sales) {
             Row row = sheet.createRow(rowNum++);
+            double profit = sale.getSalePrice().doubleValue() - sale.getPurchasePrice().doubleValue();
+            totalProfit += profit;
+
             row.createCell(0).setCellValue(sale.getProduct().getTitle());
-            row.createCell(1).setCellValue(sale.getUser().getEmail());
-            row.createCell(2).setCellValue(sale.getPrice().toString());
-            row.createCell(3).setCellValue(sale.getSaleDate().toString());
+            row.createCell(1).setCellValue(sale.getProduct().getManufacturer().getName()); // Производитель
+            row.createCell(2).setCellValue(sale.getBuyer().getEmail());
+            row.createCell(3).setCellValue(sale.getPurchasePrice().doubleValue());
+            row.createCell(4).setCellValue(sale.getSalePrice().doubleValue());
+            row.createCell(5).setCellValue(sale.getSaleDate().toString());
+            row.createCell(6).setCellValue(profit);
         }
 
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        // Итоговая строка
+        Row totalRow = sheet.createRow(rowNum);
+        totalRow.createCell(5).setCellValue("Общая прибыль:");
+        totalRow.createCell(6).setCellValue(totalProfit);
+
+        for (int i = 0; i <= 6; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment; filename=sales.xlsx");
         workbook.write(response.getOutputStream());
         workbook.close();
     }
+
 }
+

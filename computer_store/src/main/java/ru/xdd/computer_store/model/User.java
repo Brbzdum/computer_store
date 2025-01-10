@@ -100,4 +100,5 @@ public class User implements UserDetails {
     public boolean isAdmin() {
         return roles.contains(Role.ROLE_ADMIN);
     }
+
 }

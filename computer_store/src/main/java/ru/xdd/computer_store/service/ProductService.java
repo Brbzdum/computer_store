@@ -8,6 +8,7 @@ import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.repository.ProductRepository;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +71,7 @@ public class ProductService {
 
         productRepository.save(existingProduct);
     }
-    public void saveProductWithImages(Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) {
+    public void saveProductWithImages(Principal principal, Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) {
         // Логика сохранения продукта с изображениями
     }
 

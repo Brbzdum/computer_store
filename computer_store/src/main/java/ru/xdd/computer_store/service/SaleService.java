@@ -56,21 +56,19 @@ public class SaleService {
         User buyer = userRepository.findByEmail(buyerEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Покупатель с email " + buyerEmail + " не найден"));
 
-        // Получить продавца
-        User seller = product.getUser();
-
         // Создать запись о продаже
         Sale sale = new Sale();
         sale.setProduct(product);
-        sale.setUser(buyer); // Устанавливаем покупателя
-        sale.setSeller(seller); // Устанавливаем продавца
-        sale.setPrice(product.getPrice()); // Устанавливаем цену продажи
-        sale.setPurchasePrice(product.getPurchasePrice()); // Устанавливаем закупочную цену
-        sale.setSaleDate(LocalDateTime.now()); // Устанавливаем дату продажи
+        sale.setBuyer(buyer); // Устанавливаем покупателя
+        sale.setSalePrice(product.getPrice());
+        sale.setPurchasePrice(product.getPurchasePrice());
+        sale.setSaleDate(LocalDateTime.now());
 
         // Сохранить запись о продаже
         saleRepository.save(sale);
     }
+
+
 
     /**
      * Удаление продажи по ID.
@@ -80,7 +78,7 @@ public class SaleService {
         saleRepository.deleteById(id);
     }
     public List<Sale> list() {
-        return saleRepository.findAll(); // если используется Spring Data JPA
+        return saleRepository.findAll();
     }
 
 }

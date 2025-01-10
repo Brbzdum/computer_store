@@ -2,10 +2,13 @@ package ru.xdd.computer_store.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+@Getter
+@Setter
 @Entity
 @Table(name = "sales")
 public class Sale {
@@ -32,8 +35,10 @@ public class Sale {
     @Column(nullable = false)
     private BigDecimal purchasePrice;
 
+
     @Column(nullable = false)
     private LocalDateTime saleDate;
+
 
 }
 

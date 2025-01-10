@@ -2,12 +2,16 @@ package ru.xdd.computer_store.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
+@Getter
+@Setter
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
@@ -38,8 +42,18 @@ public class Product {
     @Column(nullable = false)
     private LocalDateTime createdAt; // Дата создания
 
+    @ManyToOne
+    @JoinColumn(name = "manufacturer_id", nullable = false) // Связь с таблицей производителей
+    private Manufacturer manufacturer;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
 }
