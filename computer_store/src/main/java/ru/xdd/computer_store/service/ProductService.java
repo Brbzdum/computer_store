@@ -70,6 +70,10 @@ public class ProductService {
 
         productRepository.save(existingProduct);
     }
+    public void saveProductWithImages(Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) {
+        // Логика сохранения продукта с изображениями
+    }
+
 
     @Transactional
     public void deleteProduct(Long id) {

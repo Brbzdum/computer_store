@@ -1,20 +1,13 @@
 package ru.xdd.computer_store.controller;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.xdd.computer_store.model.Product;
-import ru.xdd.computer_store.model.Sale;
-import ru.xdd.computer_store.model.User;
 import ru.xdd.computer_store.service.ProductService;
-import ru.xdd.computer_store.service.SaleService;
 
 import java.io.IOException;
-import java.security.Principal;
-import java.util.List;
 
 @Controller
 @RequestMapping("/products")

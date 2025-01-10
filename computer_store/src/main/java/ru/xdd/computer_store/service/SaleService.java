@@ -79,4 +79,8 @@ public class SaleService {
     public void deleteSale(Long id) {
         saleRepository.deleteById(id);
     }
+    public List<Sale> list() {
+        return saleRepository.findAll(); // если используется Spring Data JPA
+    }
+
 }
