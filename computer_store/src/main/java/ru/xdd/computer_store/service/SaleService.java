@@ -2,16 +2,17 @@ package ru.xdd.computer_store.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.xdd.computer_store.model.Product;
-import ru.xdd.computer_store.model.Sale;
-import ru.xdd.computer_store.model.User;
+import ru.xdd.computer_store.model.*;
 import ru.xdd.computer_store.repository.ProductRepository;
 import ru.xdd.computer_store.repository.SaleRepository;
 import ru.xdd.computer_store.repository.UserRepository;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SaleService {
@@ -61,6 +62,7 @@ public class SaleService {
         sale.setProduct(product);
         sale.setBuyer(buyer); // Устанавливаем покупателя
         sale.setSalePrice(product.getPrice());
+        sale.setManufacturer(product.getManufacturer());
         sale.setPurchasePrice(product.getPurchasePrice());
         sale.setSaleDate(LocalDateTime.now());
 
@@ -68,6 +70,27 @@ public class SaleService {
         saleRepository.save(sale);
     }
 
+    public Map<Product, Long> getPopularProducts() {
+        return saleRepository.findAll().stream()
+                .collect(Collectors.groupingBy(Sale::getProduct, Collectors.counting()));
+    }
+
+    public Map<Category, Long> getCategoryPopularity() {
+        return saleRepository.findAll().stream()
+                .collect(Collectors.groupingBy(sale -> sale.getProduct().getCategory(), Collectors.counting()));
+    }
+
+    public Map<Manufacturer, Long> getManufacturerPopularity() {
+        return saleRepository.findAll().stream()
+                .collect(Collectors.groupingBy(sale -> sale.getProduct().getManufacturer(), Collectors.counting()));
+    }
+
+    public BigDecimal calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
+        return saleRepository.findAll().stream()
+                .filter(sale -> sale.getSaleDate().isAfter(startDate) && sale.getSaleDate().isBefore(endDate))
+                .map(Sale::getSalePrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
 
     /**

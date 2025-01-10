@@ -85,5 +85,29 @@ public class ProductService {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsBytes(images);
     }
+    public List<Product> filterProducts(Long categoryId, Long manufacturerId) {
+        if (categoryId != null && manufacturerId != null) {
+            return productRepository.findByCategoryIdAndManufacturerId(categoryId, manufacturerId);
+        } else if (categoryId != null) {
+            return productRepository.findByCategoryId(categoryId);
+        } else if (manufacturerId != null) {
+            return productRepository.findByManufacturerId(manufacturerId);
+        } else {
+            return productRepository.findAll();
+        }
+    }
+
+    @Transactional
+    public void updateStock(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Товар не найден с ID: " + productId));
+        int updatedStock = product.getStock() - quantity;
+        if (updatedStock < 0) {
+            throw new IllegalStateException("Недостаточно товара на складе");
+        }
+        product.setStock(updatedStock);
+        productRepository.save(product);
+    }
+
 }
 

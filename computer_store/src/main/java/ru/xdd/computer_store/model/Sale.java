@@ -1,7 +1,6 @@
 package ru.xdd.computer_store.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,8 +25,9 @@ public class Sale {
     private User buyer;
 
     @ManyToOne
-    @JoinColumn(name = "seller_id", nullable = false)
-    private User seller;
+    @JoinColumn(name = "manufacturer_id", nullable = false)
+    private Manufacturer manufacturer;
+
 
     @Column(nullable = false)
     private BigDecimal salePrice;
@@ -38,6 +38,9 @@ public class Sale {
 
     @Column(nullable = false)
     private LocalDateTime saleDate;
+
+    @Column(nullable = false)
+    private int quantity; // Количество проданных единиц
 
 
 }

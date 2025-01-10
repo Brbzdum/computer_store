@@ -9,9 +9,9 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
 @Getter
 @Setter
+@Data
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
@@ -49,6 +49,12 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @Column(nullable = false, unique = true, length = 50)
+    private String sku; // Уникальный код товара
+
+    @Column(nullable = false)
+    private int stock; // Остатки товара
 
 
     @PrePersist

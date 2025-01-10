@@ -8,6 +8,7 @@ import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.service.ProductService;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/products")
@@ -89,6 +90,16 @@ public class ProductController {
         }
         return "redirect:/products";
     }
+
+    @GetMapping("/filter")
+    public String filterProducts(@RequestParam(required = false) Long categoryId,
+                                 @RequestParam(required = false) Long manufacturerId,
+                                 Model model) {
+        List<Product> products = productService.filterProducts(categoryId, manufacturerId);
+        model.addAttribute("products", products);
+        return "product-list";
+    }
+
 
     /**
      * Удаление товара.

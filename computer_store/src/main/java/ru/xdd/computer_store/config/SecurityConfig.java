@@ -23,17 +23,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/product/**", "/images/**", "/registration", "/user/**", "/activate/**", "/static/**").permitAll()
+                        .requestMatchers("/", "/product/**", "/registration", "/user/activate/**", "/static/**").permitAll() // Публичные маршруты
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/profile", true)
+                        .loginPage("/login") // Страница логина
+                        .defaultSuccessUrl("/profile", true) // Перенаправление после успешного входа
                         .permitAll()
                 )
-                .logout(logout -> logout.permitAll())
-                .exceptionHandling(ex -> ex.accessDeniedPage("/403"));
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                )
+                .exceptionHandling(ex -> ex.accessDeniedPage("/403")); // Страница ошибки доступа
         return http.build();
     }
 
@@ -50,6 +55,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(8);
+        return new BCryptPasswordEncoder(10);
     }
 }
+

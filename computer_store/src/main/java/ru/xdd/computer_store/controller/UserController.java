@@ -10,6 +10,7 @@ import ru.xdd.computer_store.model.User;
 import ru.xdd.computer_store.service.UserService;
 
 import java.security.Principal;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,6 +40,13 @@ public class UserController {
         User user = userService.getUserByPrincipal(principal);
         model.addAttribute("user", user);
         return "profile";
+    }
+
+    @PostMapping("/admin/user/roles/{id}")
+    public String editUserRoles(@PathVariable Long id, @RequestParam Map<String, String> form) {
+        User user = userService.getUserById(id);
+        userService.changeUserRoles(user, form);
+        return "redirect:/users";
     }
 
     /**

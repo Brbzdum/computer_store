@@ -83,6 +83,23 @@ public class AdminController {
         productService.saveProductWithImages(principal, product, file1, file2, file3);
         return "redirect:/admin";
     }
+    @GetMapping("/admin/analytics")
+    public String analytics(Model model) {
+        model.addAttribute("popularProducts", saleService.getPopularProducts());
+        model.addAttribute("categoryPopularity", saleService.getCategoryPopularity());
+        model.addAttribute("manufacturerPopularity", saleService.getManufacturerPopularity());
+        return "admin-analytics"; // Шаблон для аналитики
+    }
+
+    @GetMapping("/admin/revenue")
+    public String revenue(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+                          Model model) {
+        BigDecimal revenue = saleService.calculateRevenue(startDate, endDate);
+        model.addAttribute("revenue", revenue);
+        return "admin-revenue"; // Шаблон для отчёта о выручке
+    }
+
 
     @GetMapping("/admin/exportExcel")
     public void exportToExcel(HttpServletResponse response,
