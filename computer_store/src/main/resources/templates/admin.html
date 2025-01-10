@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Админ Панель</title>
+</head>
+<body>
+<div>
+    <h1>Админ Панель</h1>
+    <nav>
+        <a th:href="@{/admin/products}">Товары</a> |
+        <a th:href="@{/admin/categories}">Категории</a> |
+        <a th:href="@{/admin/manufacturers}">Производители</a> |
+        <a th:href="@{/admin/sales}">Отчёты по продажам</a> |
+        <a th:href="@{/admin/analytics}">Аналитика</a>
+    </nav>
+
+    <h2>Добро пожаловать, Администратор!</h2>
+    <p>Выберите пункт меню выше для работы.</p>
+</div>
+</body>
+</html>

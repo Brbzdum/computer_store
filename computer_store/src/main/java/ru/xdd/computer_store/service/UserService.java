@@ -24,24 +24,26 @@ public class UserService {
      * Создание нового пользователя с отправкой email для активации.
      */
     public boolean createUser(User user) {
-        String email = user.getEmail();
-        if (userRepository.existsByEmail(email)) {
-            return false; // Если пользователь с таким email уже существует
+        if (existsByEmail(user.getEmail())) {
+            return false; // Пользователь с таким email уже существует
         }
 
-        user.setActive(false); // Пользователь неактивен до активации
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Шифрование пароля
-        user.getRoles().add(Role.ROLE_USER); // Роль по умолчанию - USER
-        String activationCode = UUID.randomUUID().toString();
-        user.setActivationCode(activationCode);
+        user.setActive(false); // Устанавливаем, что пользователь неактивен
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Кодируем пароль
+        user.getRoles().add(Role.ROLE_USER); // Назначаем роль по умолчанию
+        user.setActivationCode(UUID.randomUUID().toString()); // Уникальный код активации
 
-        userRepository.save(user); // Сохраняем пользователя в базе
+        userRepository.save(user); // Сохраняем пользователя
 
-        String activationLink = "http://localhost:8080/activate/" + activationCode;
-        emailService.sendActivationEmail(email, activationLink); // Отправка email с кодом активации
+        // Отправляем письмо активации
+        emailService.sendActivationEmail(
+                user.getEmail(),
+                "http://localhost:8080/activate/" + user.getActivationCode()
+        );
 
         return true;
     }
+
 
     /**
      * Активация пользователя по коду.
@@ -104,10 +106,12 @@ public class UserService {
      */
     public User getUserByPrincipal(Principal principal) {
         if (principal == null) {
-            return new User(); // Если пользователь неавторизован
+            return null; // Возвращаем null вместо нового объекта
         }
-        return userRepository.findByEmail(principal.getName()).orElse(new User());
+        return userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new IllegalArgumentException("Пользователь не найден!"));
     }
+
 
     /**
      * Найти пользователя по email.
