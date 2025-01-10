@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base.html :: header(admin)"></head>
+<body>
+<div th:replace="base.html :: content">
+  <h1 class="text-center">Отчет о выручке</h1>
+  <form action="/admin/revenue" method="get" class="mb-4">
+    <div class="row">
+      <div class="col">
+        <label for="startDate" class="form-label">Начало периода</label>
+        <input type="datetime-local" class="form-control" id="startDate" name="startDate" required>
+      </div>
+      <div class="col">
+        <label for="endDate" class="form-label">Конец периода</label>
+        <input type="datetime-local" class="form-control" id="endDate" name="endDate" required>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Сформировать отчет</button>
+  </form>
+  <p><strong>Выручка:</strong> <span th:text="${revenue}">0</span> руб.</p>
+</div>
+<footer th:replace="base.html :: footer"></footer>
+</body>
+</html>

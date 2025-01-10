@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base.html :: header(admin)"></head>
+<body>
+<div th:replace="base.html :: content">
+    <h1 class="text-center">Панель администратора</h1>
+    <div class="list-group">
+        <a href="/admin/products" class="list-group-item list-group-item-action">Управление товарами</a>
+        <a href="/admin/users" class="list-group-item list-group-item-action">Управление пользователями</a>
+        <a href="/admin/reports" class="list-group-item list-group-item-action">Отчеты</a>
+    </div>
+</div>
+<footer th:replace="base.html :: footer"></footer>
+</body>
+</html>
