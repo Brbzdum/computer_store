@@ -6,7 +6,6 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "sales")
 public class Sale {
@@ -15,24 +14,25 @@ public class Sale {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product; // Проданный товар
+    private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Покупатель товара
+    @JoinColumn(name = "buyer_id", nullable = false)
+    private User buyer;
 
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
-    private User seller; // Продавец товара
+    private User seller;
 
     @Column(nullable = false)
-    private BigDecimal price; // Цена продажи
-
-    @Column(name = "purchase_price", nullable = false)
-    private BigDecimal purchasePrice; // Закупочная цена
+    private BigDecimal salePrice;
 
     @Column(nullable = false)
-    private LocalDateTime saleDate; // Дата продажи
+    private BigDecimal purchasePrice;
+
+    @Column(nullable = false)
+    private LocalDateTime saleDate;
 }
+

@@ -1,49 +1,75 @@
 package ru.xdd.computer_store.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.xdd.computer_store.model.Category;
 import ru.xdd.computer_store.service.CategoryService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
-@RequestMapping("/api/categories")
+@RequiredArgsConstructor
+@RequestMapping("/categories")
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    // Получение всех категорий
+    /**
+     * Список всех категорий.
+     */
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryService.findAllCategories();  // Возвращаем все категории
+    public String getAllCategories(Model model) {
+        List<Category> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
+        return "category-list"; // Шаблон для отображения списка категорий
     }
 
-    // Получение категории по ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
-        Optional<Category> category = categoryService.findCategoryById(id);  // Получаем Optional<Category>
-        return category
-                .map(ResponseEntity::ok)  // Если категория найдена, возвращаем 200 OK с категорией
-                .orElseGet(() -> ResponseEntity.notFound().build());  // Если не найдена, возвращаем 404 Not Found
+    /**
+     * Страница добавления новой категории.
+     */
+    @GetMapping("/add")
+    public String addCategoryPage(Model model) {
+        model.addAttribute("category", new Category());
+        return "category-add"; // Шаблон для добавления категории
     }
 
-    // Создание новой категории
-    @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        Category newCategory = categoryService.createCategory(category);  // Создаём категорию
-        return new ResponseEntity<>(newCategory, HttpStatus.CREATED);  // Возвращаем созданную категорию с статусом 201
+    /**
+     * Добавление новой категории.
+     */
+    @PostMapping("/add")
+    public String addCategory(@ModelAttribute Category category) {
+        categoryService.saveCategory(category);
+        return "redirect:/categories";
     }
 
-    // Удаление категории по ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);  // Удаляем категорию
-        return ResponseEntity.noContent().build();  // Возвращаем статус 204 No Content
+    /**
+     * Страница редактирования категории.
+     */
+    @GetMapping("/edit/{id}")
+    public String editCategoryPage(@PathVariable Long id, Model model) {
+        Category category = categoryService.getCategoryById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена с ID: " + id));
+        model.addAttribute("category", category);
+        return "category-edit"; // Шаблон для редактирования категории
+    }
+
+    /**
+     * Обновление категории.
+     */
+    @PostMapping("/edit")
+    public String editCategory(@ModelAttribute Category category) {
+        categoryService.saveCategory(category);
+        return "redirect:/categories";
+    }
+
+    /**
+     * Удаление категории.
+     */
+    @PostMapping("/delete/{id}")
+    public String deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return "redirect:/categories";
     }
 }

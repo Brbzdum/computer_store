@@ -1,48 +1,76 @@
 package ru.xdd.computer_store.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.xdd.computer_store.model.Order;
+import ru.xdd.computer_store.model.User;
 import ru.xdd.computer_store.service.OrderService;
+import ru.xdd.computer_store.service.UserService;
 
+import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
-@RequestMapping("/api/orders")
+@RequiredArgsConstructor
+@RequestMapping("/orders")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+    private final UserService userService;
 
-    // Получение всех заказов
+    /**
+     * Показать заказы текущего пользователя.
+     */
     @GetMapping
-    public List<Order> getAllOrders() {
-        return orderService.findAllOrders();
+    public String getUserOrders(Model model, Principal principal) {
+        User user = userService.getUserByPrincipal(principal);
+        List<Order> orders = orderService.getOrdersByUser(user);
+        model.addAttribute("orders", orders);
+        model.addAttribute("user", user);
+        return "order-list"; // Шаблон для отображения списка заказов пользователя
     }
 
-    // Получение заказа по ID
+    /**
+     * Просмотр деталей заказа.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        Optional<Order> order = orderService.findOrderById(id);
-        return order.map(ResponseEntity::ok)  // Если заказ найден, возвращаем 200 OK
-                .orElseGet(() -> ResponseEntity.notFound().build()); // Если не найден, 404
+    public String getOrderDetails(@PathVariable Long id, Model model, Principal principal) {
+        Order order = orderService.getOrderById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Заказ не найден с ID: " + id));
+        User user = userService.getUserByPrincipal(principal);
+        model.addAttribute("order", order);
+        model.addAttribute("user", user);
+        return "order-details"; // Шаблон для отображения деталей заказа
     }
 
-    // Создание нового заказа
-    @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        Order newOrder = orderService.createOrder(order);
-        return new ResponseEntity<>(newOrder, HttpStatus.CREATED); // Возвращаем созданный заказ с статусом 201
+    /**
+     * Создание нового заказа (пользователем).
+     */
+    @PostMapping("/create")
+    public String createOrder(@RequestParam("productId") Long productId, Principal principal) {
+        User user = userService.getUserByPrincipal(principal);
+        orderService.createOrder(productId, user);
+        return "redirect:/orders";
     }
 
-    // Удаление заказа по ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        orderService.deleteOrder(id);
-        return ResponseEntity.noContent().build(); // Возвращаем статус 204 No Content
+    /**
+     * Список всех заказов (для администратора).
+     */
+    @GetMapping("/admin")
+    public String getAllOrders(Model model) {
+        List<Order> orders = orderService.getAllOrders();
+        model.addAttribute("orders", orders);
+        return "admin-order-list"; // Шаблон для отображения всех заказов
+    }
+
+    /**
+     * Обновление статуса заказа (администратором).
+     */
+    @PostMapping("/admin/update-status/{id}")
+    public String updateOrderStatus(@PathVariable Long id, @RequestParam("status") String status) {
+        orderService.updateOrderStatus(id, status);
+        return "redirect:/orders/admin";
     }
 }

@@ -1,8 +1,7 @@
 package ru.xdd.computer_store.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.xdd.computer_store.model.Category;
 import ru.xdd.computer_store.repository.CategoryRepository;
 
@@ -10,29 +9,23 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    // Создание новой категории
-    @Transactional
-    public Category createCategory(Category category) {
-        return categoryRepository.save(category);
-    }
-
-    // Получение всех категорий
-    public List<Category> findAllCategories() {
+    public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-    // Получение категории по ID
-    public Optional<Category> findCategoryById(Long id) {
-        return categoryRepository.findById(id);  // Возвращаем Optional<Category>
+    public Optional<Category> getCategoryById(Long id) {
+        return categoryRepository.findById(id);
     }
 
-    // Удаление категории
-    @Transactional
+    public Category saveCategory(Category category) {
+        return categoryRepository.save(category);
+    }
+
     public void deleteCategory(Long id) {
         categoryRepository.deleteById(id);
     }

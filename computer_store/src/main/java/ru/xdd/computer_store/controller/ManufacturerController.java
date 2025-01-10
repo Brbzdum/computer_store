@@ -1,49 +1,75 @@
 package ru.xdd.computer_store.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.xdd.computer_store.model.Manufacturer;
 import ru.xdd.computer_store.service.ManufacturerService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
-@RequestMapping("/api/manufacturers")
+@RequiredArgsConstructor
+@RequestMapping("/manufacturers")
 public class ManufacturerController {
 
-    @Autowired
-    private ManufacturerService manufacturerService;
+    private final ManufacturerService manufacturerService;
 
-    // Получение всех производителей
+    /**
+     * Список всех производителей.
+     */
     @GetMapping
-    public List<Manufacturer> getAllManufacturers() {
-        return manufacturerService.findAllManufacturers();  // Возвращаем все производителей
+    public String getAllManufacturers(Model model) {
+        List<Manufacturer> manufacturers = manufacturerService.getAllManufacturers();
+        model.addAttribute("manufacturers", manufacturers);
+        return "manufacturer-list"; // Шаблон для отображения списка производителей
     }
 
-    // Получение производителя по ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Manufacturer> getManufacturerById(@PathVariable Long id) {
-        Optional<Manufacturer> manufacturer = manufacturerService.getManufacturerById(id);
-        return manufacturer
-                .map(ResponseEntity::ok)  // Если производитель найден, возвращаем 200 OK с данным производителем
-                .orElseGet(() -> ResponseEntity.notFound().build());  // Если не найден, возвращаем 404
+    /**
+     * Страница добавления нового производителя.
+     */
+    @GetMapping("/add")
+    public String addManufacturerPage(Model model) {
+        model.addAttribute("manufacturer", new Manufacturer());
+        return "manufacturer-add"; // Шаблон для добавления производителя
     }
 
-    // Создание нового производителя
-    @PostMapping
-    public ResponseEntity<Manufacturer> createManufacturer(@RequestBody Manufacturer manufacturer) {
-        Manufacturer newManufacturer = manufacturerService.createManufacturer(manufacturer);
-        return new ResponseEntity<>(newManufacturer, HttpStatus.CREATED);  // Возвращаем созданного производителя с статусом 201
+    /**
+     * Добавление нового производителя.
+     */
+    @PostMapping("/add")
+    public String addManufacturer(@ModelAttribute Manufacturer manufacturer) {
+        manufacturerService.saveManufacturer(manufacturer);
+        return "redirect:/manufacturers";
     }
 
-    // Удаление производителя по ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteManufacturer(@PathVariable Long id) {
+    /**
+     * Страница редактирования производителя.
+     */
+    @GetMapping("/edit/{id}")
+    public String editManufacturerPage(@PathVariable Long id, Model model) {
+        Manufacturer manufacturer = manufacturerService.getManufacturerById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Производитель не найден с ID: " + id));
+        model.addAttribute("manufacturer", manufacturer);
+        return "manufacturer-edit"; // Шаблон для редактирования производителя
+    }
+
+    /**
+     * Обновление производителя.
+     */
+    @PostMapping("/edit")
+    public String editManufacturer(@ModelAttribute Manufacturer manufacturer) {
+        manufacturerService.saveManufacturer(manufacturer);
+        return "redirect:/manufacturers";
+    }
+
+    /**
+     * Удаление производителя.
+     */
+    @PostMapping("/delete/{id}")
+    public String deleteManufacturer(@PathVariable Long id) {
         manufacturerService.deleteManufacturer(id);
-        return ResponseEntity.noContent().build();  // Возвращаем статус 204 No Content, если удаление прошло успешно
+        return "redirect:/manufacturers";
     }
 }
