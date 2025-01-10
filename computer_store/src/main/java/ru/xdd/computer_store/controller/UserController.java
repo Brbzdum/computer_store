@@ -115,8 +115,8 @@ public class UserController {
      * Страница "Мои покупки".
      */
     @GetMapping("/profile/purchases")
-    public String listUserPurchases(Principal principal, Model model) {
-        List<Sale> purchases = saleService.getUserPurchases(principal);
+    public String listUserPurchases(User buyer, Model model) {
+        List<Sale> purchases = saleService.getUserPurchases(buyer);
         model.addAttribute("purchases", purchases);
         return "profile/purchases"; // Шаблон для отображения покупок
     }

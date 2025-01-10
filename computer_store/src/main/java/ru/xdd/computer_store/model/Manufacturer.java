@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Data
@@ -21,4 +23,10 @@ public class Manufacturer {
 
     @Column(length = 500)
     private String description; // Дополнительное описание производителя
+
+    @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Product> products;
+
+    @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sale> sales;
 }

@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.xdd.computer_store.model.*;
+import ru.xdd.computer_store.repository.SaleRepository;
 import ru.xdd.computer_store.service.*;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -35,8 +37,9 @@ public class AdminController {
     private final CategoryService categoryService;
     private final ManufacturerService manufacturerService;
     private final SaleService saleService;
+    private final SaleRepository saleRepository;
 
-    @GetMapping("/admin")
+    @GetMapping
     public String adminPage(Model model, Principal principal) {
         model.addAttribute("users", userService.list());
         model.addAttribute("products", productService.getAllProducts());
@@ -47,13 +50,13 @@ public class AdminController {
         return "admin";
     }
 
-    @PostMapping("/admin/user/ban/{id}")
+    @PostMapping("/user/ban/{id}")
     public String toggleUserBan(@PathVariable Long id) {
         userService.toggleUserBan(id);
         return "redirect:/admin";
     }
 
-    @PostMapping("/admin/user/edit")
+    @PostMapping("/user/edit")
     public String editUserRoles(@RequestParam("userId") Long userId, @RequestParam Map<String, String> form) {
         User user = userService.getUserById(userId);
         userService.changeUserRoles(user, form);
@@ -63,7 +66,7 @@ public class AdminController {
     /**
      * Добавление нового продукта.
      */
-    @PostMapping("/admin/product/add")
+    @PostMapping("/product/add")
     public String addProduct(@RequestParam("mainImage") MultipartFile mainImageFile,
                              @RequestParam("additionalImages") MultipartFile[] additionalImageFiles,
                              @Valid @ModelAttribute Product product,
@@ -84,7 +87,7 @@ public class AdminController {
     /**
      * Редактирование продукта.
      */
-    @PostMapping("/admin/product/edit/{id}")
+    @PostMapping("/product/edit/{id}")
     public String editProduct(@PathVariable Long id,
                               @RequestParam("mainImage") MultipartFile mainImageFile,
                               @RequestParam("additionalImages") MultipartFile[] additionalImageFiles,
@@ -106,13 +109,13 @@ public class AdminController {
     /**
      * Удаление продукта.
      */
-    @PostMapping("/admin/product/delete/{id}")
+    @PostMapping("/product/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return "redirect:/admin";
     }
 
-    @GetMapping("/admin/analytics")
+    @GetMapping("/analytics")
     public String analytics(Model model) {
         model.addAttribute("popularProducts", saleService.getPopularProducts());
         model.addAttribute("categoryPopularity", saleService.getCategoryPopularity());
@@ -120,7 +123,7 @@ public class AdminController {
         return "admin-analytics"; // Шаблон для аналитики
     }
 
-    @GetMapping("/admin/revenue")
+    @GetMapping("/revenue")
     public String revenue(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
                           Model model) {
@@ -130,14 +133,11 @@ public class AdminController {
     }
 
 
-    @GetMapping("/admin/exportExcel")
+    @GetMapping("/exportExcel")
     public void exportToExcel(HttpServletResponse response,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) throws IOException {
-        List<Sale> sales = saleService.list();
-        sales = sales.stream()
-                .filter(sale -> sale.getSaleDate().isAfter(startDate) && sale.getSaleDate().isBefore(endDate))
-                .collect(Collectors.toList());
+        List<Sale> sales = saleRepository.findSalesByDateRange(startDate, endDate);
 
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sales");
@@ -194,7 +194,7 @@ public class AdminController {
     /**
      * Изменение запаса товара.
      */
-    @PostMapping("/admin/product/updateStock")
+    @PostMapping("/product/updateStock")
     public String updateProductStock(@RequestParam Long productId,
                                      @RequestParam int quantity,
                                      Model model) {
@@ -218,7 +218,7 @@ public class AdminController {
     /**
      * Страница добавления нового производителя.
      */
-    @GetMapping("/admin/manufacturers/add")
+    @GetMapping("/manufacturers/add")
     public String addManufacturerPage(Model model) {
         model.addAttribute("manufacturer", new Manufacturer());
         return "admin/manufacturer-add";
@@ -227,7 +227,7 @@ public class AdminController {
     /**
      * Добавление нового производителя.
      */
-    @PostMapping("/admin/manufacturers/add")
+    @PostMapping("/manufacturers/add")
     public String addManufacturer(@ModelAttribute Manufacturer manufacturer) {
         manufacturerService.saveManufacturer(manufacturer);
         return "redirect:/admin/manufacturers";
@@ -236,7 +236,7 @@ public class AdminController {
     /**
      * Страница редактирования производителя.
      */
-    @GetMapping("/admin/manufacturers/edit/{id}")
+    @GetMapping("/manufacturers/edit/{id}")
     public String editManufacturerPage(@PathVariable Long id, Model model) {
         Manufacturer manufacturer = manufacturerService.getManufacturerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Производитель не найден с ID: " + id));
@@ -247,7 +247,7 @@ public class AdminController {
     /**
      * Обновление производителя.
      */
-    @PostMapping("/admin/manufacturers/edit")
+    @PostMapping("/manufacturers/edit")
     public String editManufacturer(@ModelAttribute Manufacturer manufacturer) {
         manufacturerService.saveManufacturer(manufacturer);
         return "redirect:/admin/manufacturers";
@@ -256,7 +256,7 @@ public class AdminController {
     /**
      * Удаление производителя.
      */
-    @PostMapping("/admin/manufacturers/delete/{id}")
+    @PostMapping("/manufacturers/delete/{id}")
     public String deleteManufacturer(@PathVariable Long id) {
         manufacturerService.deleteManufacturer(id);
         return "redirect:/admin/manufacturers";
@@ -264,7 +264,7 @@ public class AdminController {
     /**
      * Список всех категорий.
      */
-    @GetMapping("/admin/categories")
+    @GetMapping("/categories")
     public String getAllCategories(Model model) {
         model.addAttribute("categories", categoryService.getAllCategories());
         return "admin/category-list"; // Шаблон для отображения списка категорий
@@ -273,7 +273,7 @@ public class AdminController {
     /**
      * Страница добавления новой категории.
      */
-    @GetMapping("/admin/categories/add")
+    @GetMapping("/categories/add")
     public String addCategoryPage(Model model) {
         model.addAttribute("category", new Category());
         return "admin/category-add"; // Шаблон для добавления категории
@@ -282,7 +282,7 @@ public class AdminController {
     /**
      * Добавление новой категории.
      */
-    @PostMapping("/admin/categories/add")
+    @PostMapping("/categories/add")
     public String addCategory(@ModelAttribute Category category) {
         categoryService.saveCategory(category);
         return "redirect:/admin/categories";
@@ -291,7 +291,7 @@ public class AdminController {
     /**
      * Страница редактирования категории.
      */
-    @GetMapping("/admin/categories/edit/{id}")
+    @GetMapping("/categories/edit/{id}")
     public String editCategoryPage(@PathVariable Long id, Model model) {
         Category category = categoryService.getCategoryById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Категория не найдена с ID: " + id));
@@ -302,7 +302,7 @@ public class AdminController {
     /**
      * Обновление категории.
      */
-    @PostMapping("/admin/categories/edit")
+    @PostMapping("/categories/edit")
     public String editCategory(@ModelAttribute Category category) {
         categoryService.saveCategory(category);
         return "redirect:/admin/categories";
@@ -311,7 +311,7 @@ public class AdminController {
     /**
      * Удаление категории.
      */
-    @PostMapping("/admin/categories/delete/{id}")
+    @PostMapping("/categories/delete/{id}")
     public String deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return "redirect:/admin/categories";

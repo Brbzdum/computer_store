@@ -30,8 +30,8 @@ public class SaleService {
     /**
      * Получить список покупок пользователя.
      */
-    public List<Sale> getUserPurchases(Principal principal) {
-        return saleRepository.findByUserEmail(principal.getName());
+    public List<Sale> getUserPurchases(User buyer) {
+        return saleRepository.findByBuyer(buyer);
     }
 
     /**

@@ -59,6 +59,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "buyer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sale> sales;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
