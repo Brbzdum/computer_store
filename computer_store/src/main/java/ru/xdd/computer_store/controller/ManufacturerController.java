@@ -5,7 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.xdd.computer_store.model.Manufacturer;
+import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.service.ManufacturerService;
+import ru.xdd.computer_store.service.ProductService;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class ManufacturerController {
 
     private final ManufacturerService manufacturerService;
+    private final ProductService productService;
 
     /**
      * Список всех производителей.
@@ -27,49 +30,20 @@ public class ManufacturerController {
     }
 
     /**
-     * Страница добавления нового производителя.
+     * Просмотр информации о производителе и его продуктах с фильтрацией по категориям.
      */
-    @GetMapping("/add")
-    public String addManufacturerPage(Model model) {
-        model.addAttribute("manufacturer", new Manufacturer());
-        return "manufacturer-add"; // Шаблон для добавления производителя
-    }
-
-    /**
-     * Добавление нового производителя.
-     */
-    @PostMapping("/add")
-    public String addManufacturer(@ModelAttribute Manufacturer manufacturer) {
-        manufacturerService.saveManufacturer(manufacturer);
-        return "redirect:/manufacturers";
-    }
-
-    /**
-     * Страница редактирования производителя.
-     */
-    @GetMapping("/edit/{id}")
-    public String editManufacturerPage(@PathVariable Long id, Model model) {
+    @GetMapping("/{id}")
+    public String viewManufacturer(@PathVariable Long id,
+                                   @RequestParam(required = false) Long categoryId,
+                                   Model model) {
         Manufacturer manufacturer = manufacturerService.getManufacturerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Производитель не найден с ID: " + id));
+
+        List<Product> products = productService.filterProductsByManufacturerAndCategory(id, categoryId);
         model.addAttribute("manufacturer", manufacturer);
-        return "manufacturer-edit"; // Шаблон для редактирования производителя
-    }
-
-    /**
-     * Обновление производителя.
-     */
-    @PostMapping("/edit")
-    public String editManufacturer(@ModelAttribute Manufacturer manufacturer) {
-        manufacturerService.saveManufacturer(manufacturer);
-        return "redirect:/manufacturers";
-    }
-
-    /**
-     * Удаление производителя.
-     */
-    @PostMapping("/delete/{id}")
-    public String deleteManufacturer(@PathVariable Long id) {
-        manufacturerService.deleteManufacturer(id);
-        return "redirect:/manufacturers";
+        model.addAttribute("products", products);
+        model.addAttribute("categories", productService.getAllCategories()); // Для фильтрации
+        return "manufacturer-view"; // Шаблон для отображения страницы производителя
     }
 }
+

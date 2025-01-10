@@ -6,10 +6,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.xdd.computer_store.model.Sale;
 import ru.xdd.computer_store.model.User;
+import ru.xdd.computer_store.service.SaleService;
 import ru.xdd.computer_store.service.UserService;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -18,6 +21,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final SaleService saleService;
 
     /**
      * Страница входа.
@@ -49,16 +53,7 @@ public class UserController {
         return "redirect:/users";
     }
 
-    /**
-     * Информация о другом пользователе.
-     */
-    @GetMapping("/user/{user}")
-    public String userInfo(@PathVariable("user") User user, Model model, Principal principal) {
-        model.addAttribute("user", user);
-        model.addAttribute("userByPrincipal", userService.getUserByPrincipal(principal));
-        model.addAttribute("products", user.getProducts());
-        return "user-info";
-    }
+
 
 
     /**
@@ -105,6 +100,7 @@ public class UserController {
         return "login";
     }
 
+
     /**
      * Удаление пользователя (админский функционал).
      */
@@ -113,5 +109,15 @@ public class UserController {
         userService.deleteUser(id);
         model.addAttribute("message", "Пользователь успешно удалён.");
         return "redirect:/users";
+    }
+
+    /**
+     * Страница "Мои покупки".
+     */
+    @GetMapping("/profile/purchases")
+    public String listUserPurchases(Principal principal, Model model) {
+        List<Sale> purchases = saleService.getUserPurchases(principal);
+        model.addAttribute("purchases", purchases);
+        return "profile/purchases"; // Шаблон для отображения покупок
     }
 }

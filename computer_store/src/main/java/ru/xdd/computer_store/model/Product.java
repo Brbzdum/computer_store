@@ -56,10 +56,6 @@ public class Product {
     @Column(nullable = false)
     private int stock; // Остатки товара
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
 
     @PrePersist
     protected void onCreate() {

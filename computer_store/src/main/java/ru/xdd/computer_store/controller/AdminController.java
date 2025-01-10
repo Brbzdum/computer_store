@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.xdd.computer_store.model.Manufacturer;
 import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.model.Sale;
 import ru.xdd.computer_store.model.User;
@@ -154,6 +155,69 @@ public class AdminController {
         workbook.write(response.getOutputStream());
         workbook.close();
     }
+    /**
+     * Удаление продажи.
+     */
+    @PostMapping("/sales/delete")
+    public String deleteSale(@RequestParam Long saleId) {
+        saleService.deleteSale(saleId);
+        return "redirect:/admin/sales";
+    }
 
+    /**
+     * Отображение всех продаж.
+     */
+    @GetMapping("/sales")
+    public String listSales(Model model) {
+        model.addAttribute("sales", saleService.getAllSales());
+        return "admin/sales"; // Шаблон для отображения всех продаж
+    }
+
+    /**
+     * Страница добавления нового производителя.
+     */
+    @GetMapping("/admin/manufacturers/add")
+    public String addManufacturerPage(Model model) {
+        model.addAttribute("manufacturer", new Manufacturer());
+        return "admin/manufacturer-add";
+    }
+
+    /**
+     * Добавление нового производителя.
+     */
+    @PostMapping("/admin/manufacturers/add")
+    public String addManufacturer(@ModelAttribute Manufacturer manufacturer) {
+        manufacturerService.saveManufacturer(manufacturer);
+        return "redirect:/admin/manufacturers";
+    }
+
+    /**
+     * Страница редактирования производителя.
+     */
+    @GetMapping("/admin/manufacturers/edit/{id}")
+    public String editManufacturerPage(@PathVariable Long id, Model model) {
+        Manufacturer manufacturer = manufacturerService.getManufacturerById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Производитель не найден с ID: " + id));
+        model.addAttribute("manufacturer", manufacturer);
+        return "admin/manufacturer-edit";
+    }
+
+    /**
+     * Обновление производителя.
+     */
+    @PostMapping("/admin/manufacturers/edit")
+    public String editManufacturer(@ModelAttribute Manufacturer manufacturer) {
+        manufacturerService.saveManufacturer(manufacturer);
+        return "redirect:/admin/manufacturers";
+    }
+
+    /**
+     * Удаление производителя.
+     */
+    @PostMapping("/admin/manufacturers/delete/{id}")
+    public String deleteManufacturer(@PathVariable Long id) {
+        manufacturerService.deleteManufacturer(id);
+        return "redirect:/admin/manufacturers";
+    }
 }
 

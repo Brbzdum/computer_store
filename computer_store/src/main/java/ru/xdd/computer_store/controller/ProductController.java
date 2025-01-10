@@ -21,93 +21,26 @@ public class ProductController {
     }
 
     /**
-     * Список всех товаров.
+     * Отображение списка товаров с возможностью фильтрации.
      */
     @GetMapping
-    public String listProducts(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
-        return "product-list"; // Страница с отображением списка товаров
+    public String listProducts(@RequestParam(required = false) Long categoryId,
+                               @RequestParam(required = false) Long manufacturerId,
+                               Model model) {
+        List<Product> products = productService.filterProducts(categoryId, manufacturerId);
+        model.addAttribute("products", products);
+        return "products/list"; // Шаблон для отображения списка товаров
     }
 
+
     /**
-     * Просмотр информации о товаре.
+     * Просмотр информации о конкретном товаре.
      */
     @GetMapping("/{id}")
     public String viewProduct(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Товар не найден с ID: " + id));
         model.addAttribute("product", product);
-        return "product-view"; // Страница с деталями товара
-    }
-
-    /**
-     * Отображение формы добавления нового товара.
-     */
-    @GetMapping("/add")
-    public String addProductForm(Model model) {
-        model.addAttribute("product", new Product());
-        return "product-add"; // Форма для добавления товара
-    }
-
-    /**
-     * Обработка формы добавления товара.
-     */
-    @PostMapping("/add")
-    public String addProduct(@ModelAttribute Product product,
-                             @RequestParam("mainImage") MultipartFile mainImageFile,
-                             @RequestParam("additionalImages") MultipartFile[] additionalImageFiles) {
-        try {
-            productService.saveProductWithImages(product, mainImageFile, additionalImageFiles);
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка сохранения изображения", e);
-        }
-        return "redirect:/products";
-    }
-
-    /**
-     * Отображение формы редактирования товара.
-     */
-    @GetMapping("/edit/{id}")
-    public String editProductForm(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Товар не найден с ID: " + id));
-        model.addAttribute("product", product);
-        return "product-edit"; // Форма для редактирования товара
-    }
-
-    /**
-     * Обработка формы редактирования товара.
-     */
-    @PostMapping("/edit/{id}")
-    public String editProduct(@PathVariable Long id,
-                              @ModelAttribute Product product,
-                              @RequestParam("mainImage") MultipartFile mainImageFile,
-                              @RequestParam("additionalImages") MultipartFile[] additionalImageFiles) {
-        try {
-            productService.updateProductWithImages(id, product, mainImageFile, additionalImageFiles);
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка обновления изображения", e);
-        }
-        return "redirect:/products";
-    }
-
-    @GetMapping("/filter")
-    public String filterProducts(@RequestParam(required = false) Long categoryId,
-                                 @RequestParam(required = false) Long manufacturerId,
-                                 Model model) {
-        List<Product> products = productService.filterProducts(categoryId, manufacturerId);
-        model.addAttribute("products", products);
-        return "product-list";
-    }
-
-
-    /**
-     * Удаление товара.
-     */
-    @PostMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return "redirect:/products";
+        return "products/view"; // Шаблон для отображения информации о товаре
     }
 }
-

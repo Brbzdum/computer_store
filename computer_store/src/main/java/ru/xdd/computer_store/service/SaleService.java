@@ -28,13 +28,6 @@ public class SaleService {
     }
 
     /**
-     * Получить список всех продаж.
-     */
-    public List<Sale> listAllSales() {
-        return saleRepository.findAll();
-    }
-
-    /**
      * Получить список покупок пользователя.
      */
     public List<Sale> getUserPurchases(Principal principal) {
@@ -91,7 +84,22 @@ public class SaleService {
                 .map(Sale::getSalePrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+    @Transactional
+    public void createSale(Product product, User buyer, int quantity) {
+        Sale sale = new Sale();
+        sale.setProduct(product);
+        sale.setBuyer(buyer);
+        sale.setManufacturer(product.getManufacturer());
+        sale.setSalePrice(product.getPrice());
+        sale.setPurchasePrice(product.getPurchasePrice());
+        sale.setQuantity(quantity);
 
+        saleRepository.save(sale);
+    }
+
+    public List<Sale> getAllSales() {
+        return saleRepository.findAll();
+    }
 
     /**
      * Удаление продажи по ID.
@@ -100,6 +108,7 @@ public class SaleService {
     public void deleteSale(Long id) {
         saleRepository.deleteById(id);
     }
+
     public List<Sale> list() {
         return saleRepository.findAll();
     }
