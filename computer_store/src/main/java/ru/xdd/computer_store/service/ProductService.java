@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.xdd.computer_store.model.Category;
 import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.repository.ProductRepository;
 
 import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +30,15 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
+
+
+    /**
+     * Получение всех категорий (заглушка).
+     */
+    public List<Category> getAllCategories() {
+        // Реализуйте через CategoryRepository или добавьте ваш способ получения категорий
+        return new ArrayList<>(); // Временная заглушка
+    }
     @Transactional
     public void saveProductWithImages(Product product, MultipartFile mainImageFile, MultipartFile[] additionalImageFiles) throws IOException {
         if (!mainImageFile.isEmpty()) {
@@ -71,9 +80,7 @@ public class ProductService {
 
         productRepository.save(existingProduct);
     }
-    public void saveProductWithImages(Principal principal, Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) {
-        // Логика сохранения продукта с изображениями
-    }
+
 
 
     @Transactional
@@ -108,6 +115,7 @@ public class ProductService {
         product.setStock(updatedStock);
         productRepository.save(product);
     }
+
 
 }
 

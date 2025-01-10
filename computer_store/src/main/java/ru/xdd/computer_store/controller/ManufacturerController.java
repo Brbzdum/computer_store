@@ -39,7 +39,8 @@ public class ManufacturerController {
         Manufacturer manufacturer = manufacturerService.getManufacturerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Производитель не найден с ID: " + id));
 
-        List<Product> products = productService.filterProductsByManufacturerAndCategory(id, categoryId);
+        // Используем метод filterProducts вместо нового метода
+        List<Product> products = productService.filterProducts(categoryId, id);
         model.addAttribute("manufacturer", manufacturer);
         model.addAttribute("products", products);
         model.addAttribute("categories", productService.getAllCategories()); // Для фильтрации

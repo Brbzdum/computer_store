@@ -14,10 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.xdd.computer_store.model.Manufacturer;
-import ru.xdd.computer_store.model.Product;
-import ru.xdd.computer_store.model.Sale;
-import ru.xdd.computer_store.model.User;
+import ru.xdd.computer_store.model.*;
 import ru.xdd.computer_store.service.*;
 
 import java.io.IOException;
@@ -63,27 +60,58 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    /**
+     * Добавление нового продукта.
+     */
     @PostMapping("/admin/product/add")
-    public String addProduct(@RequestParam("file1") MultipartFile file1,
-                             @RequestParam("file2") MultipartFile file2,
-                             @RequestParam("file3") MultipartFile file3,
-                             @Valid Product product,
-                             Principal principal,
-                             Model model,
-                             BindingResult bindingResult) throws IOException {
+    public String addProduct(@RequestParam("mainImage") MultipartFile mainImageFile,
+                             @RequestParam("additionalImages") MultipartFile[] additionalImageFiles,
+                             @Valid @ModelAttribute Product product,
+                             BindingResult bindingResult,
+                             Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorMessage", "Некорректно заполнены поля");
-            return "admin-product-add";
+            return "admin/product-add";
         }
-
-        if (product.getPrice() != null) {
-            product.setPurchasePrice(product.getPrice().multiply(BigDecimal.valueOf(1.5)));
+        try {
+            productService.saveProductWithImages(product, mainImageFile, additionalImageFiles);
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Ошибка при сохранении изображения");
+            return "admin/product-add";
         }
-
-
-        productService.saveProductWithImages(principal, product, file1, file2, file3);
         return "redirect:/admin";
     }
+    /**
+     * Редактирование продукта.
+     */
+    @PostMapping("/admin/product/edit/{id}")
+    public String editProduct(@PathVariable Long id,
+                              @RequestParam("mainImage") MultipartFile mainImageFile,
+                              @RequestParam("additionalImages") MultipartFile[] additionalImageFiles,
+                              @Valid @ModelAttribute Product product,
+                              BindingResult bindingResult,
+                              Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", "Некорректно заполнены поля");
+            return "admin/product-edit";
+        }
+        try {
+            productService.updateProductWithImages(id, product, mainImageFile, additionalImageFiles);
+        } catch (IOException e) {
+            model.addAttribute("errorMessage", "Ошибка при обновлении изображения");
+            return "admin/product-edit";
+        }
+        return "redirect:/admin";
+    }
+    /**
+     * Удаление продукта.
+     */
+    @PostMapping("/admin/product/delete/{id}")
+    public String deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return "redirect:/admin";
+    }
+
     @GetMapping("/admin/analytics")
     public String analytics(Model model) {
         model.addAttribute("popularProducts", saleService.getPopularProducts());
@@ -163,7 +191,21 @@ public class AdminController {
         saleService.deleteSale(saleId);
         return "redirect:/admin/sales";
     }
-
+    /**
+     * Изменение запаса товара.
+     */
+    @PostMapping("/admin/product/updateStock")
+    public String updateProductStock(@RequestParam Long productId,
+                                     @RequestParam int quantity,
+                                     Model model) {
+        try {
+            productService.updateStock(productId, quantity);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "admin"; // Возврат на админ-страницу с ошибкой
+        }
+        return "redirect:/admin";
+    }
     /**
      * Отображение всех продаж.
      */
@@ -218,6 +260,61 @@ public class AdminController {
     public String deleteManufacturer(@PathVariable Long id) {
         manufacturerService.deleteManufacturer(id);
         return "redirect:/admin/manufacturers";
+    }
+    /**
+     * Список всех категорий.
+     */
+    @GetMapping("/admin/categories")
+    public String getAllCategories(Model model) {
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "admin/category-list"; // Шаблон для отображения списка категорий
+    }
+
+    /**
+     * Страница добавления новой категории.
+     */
+    @GetMapping("/admin/categories/add")
+    public String addCategoryPage(Model model) {
+        model.addAttribute("category", new Category());
+        return "admin/category-add"; // Шаблон для добавления категории
+    }
+
+    /**
+     * Добавление новой категории.
+     */
+    @PostMapping("/admin/categories/add")
+    public String addCategory(@ModelAttribute Category category) {
+        categoryService.saveCategory(category);
+        return "redirect:/admin/categories";
+    }
+
+    /**
+     * Страница редактирования категории.
+     */
+    @GetMapping("/admin/categories/edit/{id}")
+    public String editCategoryPage(@PathVariable Long id, Model model) {
+        Category category = categoryService.getCategoryById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена с ID: " + id));
+        model.addAttribute("category", category);
+        return "admin/category-edit"; // Шаблон для редактирования категории
+    }
+
+    /**
+     * Обновление категории.
+     */
+    @PostMapping("/admin/categories/edit")
+    public String editCategory(@ModelAttribute Category category) {
+        categoryService.saveCategory(category);
+        return "redirect:/admin/categories";
+    }
+
+    /**
+     * Удаление категории.
+     */
+    @PostMapping("/admin/categories/delete/{id}")
+    public String deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return "redirect:/admin/categories";
     }
 }
 
