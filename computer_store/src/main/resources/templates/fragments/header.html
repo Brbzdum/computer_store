@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<header th:fragment="header(user)">
+<header th:fragment="header(~{user})">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" th:href="@{/}">Компьютерный магазин</a>

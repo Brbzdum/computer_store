@@ -15,6 +15,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+
     /**
      * Отправка email для активации аккаунта.
      *

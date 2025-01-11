@@ -43,4 +43,7 @@ public class ProductController {
         model.addAttribute("product", product);
         return "products/view"; // Шаблон для отображения информации о товаре
     }
+
+
+
 }
