@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Мои покупки</title>
+    <title>Ваши покупки</title>
 </head>
 <body>
-<#include "fragments/layout.ftlh">
+<h1>Ваши покупки</h1>
 
-<div>
-    <h1>Мои покупки</h1>
-    <table class="table table-striped mt-4">
+<#if sales?size == 0>
+    <p>Вы еще ничего не купили.</p>
+<#else>
+    <table>
         <thead>
         <tr>
-            <th>Название товара</th>
+            <th>Товар</th>
+            <th>Количество</th>
             <th>Цена</th>
             <th>Дата покупки</th>
         </tr>
         </thead>
         <tbody>
-        <#list purchases as purchase>
+        <#list sales as sale>
             <tr>
-                <td>${purchase.product.name! 'Название товара'}</td>
-                <td>${purchase.salePrice! '0'} ₽</td>
-                <td>${purchase.saleDate! 'Дата'}</td>
+                <td>${sale.product.title}</td>
+                <td>${sale.quantity}</td>
+                <td>${sale.salePrice} ₽</td>
+                <td>${sale.saleDate?string("yyyy-MM-dd HH:mm")}</td>
             </tr>
         </#list>
         </tbody>
     </table>
-</div>
+</#if>
+
+<a href="/products">Продолжить покупки</a>
 </body>
 </html>

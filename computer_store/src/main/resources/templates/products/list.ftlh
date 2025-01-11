@@ -15,7 +15,7 @@
         <div class="col-md-4">
             <label for="category" class="form-label">Категория:</label>
             <select name="categoryId" id="category" class="form-select">
-                <option value="" <#if selectedCategoryId?? && selectedCategoryId == ''>selected</#if>>Все категории</option>
+                <option value="" <#if selectedCategoryId?? && (selectedCategoryId == 0 || selectedCategoryId == "")>selected</#if>>Все категории</option>
                 <#list categories as category>
                     <option value="${category.id}" <#if selectedCategoryId == category.id>selected</#if>>${category.name}</option>
                 </#list>
@@ -24,7 +24,7 @@
         <div class="col-md-4">
             <label for="manufacturer" class="form-label">Производитель:</label>
             <select name="manufacturerId" id="manufacturer" class="form-select">
-                <option value="" <#if selectedManufacturerId?? && selectedManufacturerId == ''>selected</#if>>Все производители</option>
+                <option value="" <#if selectedManufacturerId?? && (selectedManufacturerId == 0 || selectedManufacturerId == "")>selected</#if>>Все производители</option>
                 <#list manufacturers as manufacturer>
                     <option value="${manufacturer.id}" <#if selectedManufacturerId == manufacturer.id>selected</#if>>${manufacturer.name}</option>
                 </#list>
@@ -48,6 +48,11 @@
                             <h5 class="card-title">${product.title! 'Название товара'}</h5>
                             <p class="card-text">Цена: ${product.price! '0.00'} ₽</p>
                             <a href="/products/${product.id}" class="btn btn-primary">Подробнее</a>
+                            <form action="/cart/add" method="post" class="mt-2">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
+                                <input type="hidden" name="productId" value="${product.id! ''}"/>
+                                <button type="submit" class="btn btn-success">Добавить в корзину</button>
+                            </form>
                         </div>
                     </div>
                 </div>

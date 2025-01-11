@@ -1,6 +1,8 @@
 package ru.xdd.computer_store.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,6 +11,7 @@ import ru.xdd.computer_store.model.Manufacturer;
 import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.repository.ProductRepository;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +19,7 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final ManufacturerService manufacturerService;
@@ -36,7 +39,24 @@ public class ProductService {
     }
 
 
+    public List<Product> getProductsByFilter(Long categoryId, Long manufacturerId) {
+        log.debug("getProductsByFilter called with categoryId={} and manufacturerId={}", categoryId, manufacturerId);
 
+        List<Product> products;
+
+        if (categoryId == null && manufacturerId == null) {
+            products = productRepository.findAll();
+        } else if (categoryId != null && manufacturerId == null) {
+            products = productRepository.findByCategoryId(categoryId);
+        } else if (categoryId == null && manufacturerId != null) {
+            products = productRepository.findByManufacturerId(manufacturerId);
+        } else {
+            products = productRepository.findByCategoryIdAndManufacturerId(categoryId, manufacturerId);
+        }
+
+        log.debug("Products found: {}", products.size());
+        return products;
+    }
     /**
      * Получение всех категорий (заглушка).
      */
@@ -101,17 +121,8 @@ public class ProductService {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsBytes(images);
     }
-    public List<Product> filterProducts(Long categoryId, Long manufacturerId) {
-        if (categoryId != null && manufacturerId != null) {
-            return productRepository.findByCategoryIdAndManufacturerId(categoryId, manufacturerId);
-        } else if (categoryId != null) {
-            return productRepository.findByCategoryId(categoryId);
-        } else if (manufacturerId != null) {
-            return productRepository.findByManufacturerId(manufacturerId);
-        } else {
-            return productRepository.findAll();
-        }
-    }
+
+
 
     @Transactional
     public void updateStock(Long productId, int quantity) {

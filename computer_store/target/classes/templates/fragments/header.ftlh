@@ -21,7 +21,6 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link" href="/products">Товары</a>
-
                 </li>
                 <#if user?has_content && user.roles?seq_contains("ROLE_ADMIN")>
                     <li class="nav-item"><a class="nav-link" href="/admin">Админ Панель</a></li>
@@ -34,6 +33,18 @@
                 </#if>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- Корзина -->
+                <#if user?has_content>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart">
+                            Корзина
+                            <#if cartItemCount?? && cartItemCount > 0>
+                                (<span>${cartItemCount}</span>)
+                            </#if>
+                        </a>
+                    </li>
+                </#if>
+                <!-- Профиль и выход -->
                 <#if user?has_content>
                     <li class="nav-item"><a class="nav-link" href="/users/profile">Профиль</a></li>
                     <li class="nav-item">
@@ -43,6 +54,7 @@
                         </form>
                     </li>
                 <#else>
+                    <!-- Авторизация -->
                     <li class="nav-item"><a class="nav-link" href="/login">Войти</a></li>
                     <li class="nav-item"><a class="nav-link" href="/registration">Регистрация</a></li>
                 </#if>
@@ -50,5 +62,6 @@
         </div>
     </div>
 </nav>
+
 </body>
 </html>

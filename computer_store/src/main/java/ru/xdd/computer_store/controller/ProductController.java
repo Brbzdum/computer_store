@@ -29,7 +29,7 @@ public class ProductController {
     public String listProducts(@RequestParam(required = false) Long categoryId,
                                @RequestParam(required = false) Long manufacturerId,
                                Model model) {
-        List<Product> products = productService.filterProducts(categoryId, manufacturerId);
+        List<Product> products = productService.getProductsByFilter(categoryId, manufacturerId);
         List<Category> categories = productService.getAllCategories();
         List<Manufacturer> manufacturers = productService.getAllManufacturers();
 
@@ -37,10 +37,11 @@ public class ProductController {
         model.addAttribute("products", products);
         model.addAttribute("categories", categories);
         model.addAttribute("manufacturers", manufacturers);
-        model.addAttribute("selectedCategoryId", categoryId);
-        model.addAttribute("selectedManufacturerId", manufacturerId);
+        model.addAttribute("selectedCategoryId", categoryId != null ? categoryId : "");
+        model.addAttribute("selectedManufacturerId", manufacturerId != null ? manufacturerId : "");
         return "products/list";
     }
+
 
 
     /**

@@ -6,7 +6,7 @@
     <title>Аналитика</title>
 </head>
 <body>
-<#include "layout.ftlh">
+<#include "../layout.ftlh">
 
 <div>
     <h1>Аналитика</h1>

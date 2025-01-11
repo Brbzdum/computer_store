@@ -4,7 +4,7 @@
     <title>Профиль пользователя</title>
 </head>
 <body>
-<#include "fragments/layout.ftlh">
+<#include "../layout.ftlh">
 
 <div>
     <h1>Ваш профиль</h1>

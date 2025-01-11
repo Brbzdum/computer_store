@@ -4,7 +4,7 @@
     <title>Админка</title>
 </head>
 <body>
-<#include "layout.ftlh">
+<#include "../layout.ftlh">
 
 <div>
     <h1>Административная панель</h1>
