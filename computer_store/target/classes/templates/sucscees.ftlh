@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <title>Покупка завершена</title>
     <link rel="stylesheet" href="/css/styles.css">

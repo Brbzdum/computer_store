@@ -4,7 +4,7 @@
     <title>Мои покупки</title>
 </head>
 <body>
-<#include "/templates/fragments/layout.ftlh">
+<#include "fragments/layout.ftlh">
 
 <div>
     <h1>Мои покупки</h1>

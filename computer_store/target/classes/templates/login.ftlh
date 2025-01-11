@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout}">
+<html>
 <head>
     <title>Вход</title>
 </head>
 <body>
-<div th:fragment="content">
+<#include "layout.ftlh">
+
+<div>
     <h1>Вход в систему</h1>
-    <form th:action="@{/login}" method="post" class="mt-4">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <form action="/login" method="post" class="mt-4">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
         <div class="mb-3">
             <label for="email" class="form-label">Email:</label>
             <input type="email" id="email" name="username" class="form-control" placeholder="Введите email" required>
@@ -18,10 +20,12 @@
         </div>
         <button type="submit" class="btn btn-primary">Войти</button>
     </form>
-    <p class="mt-3">Нет аккаунта? <a th:href="@{/registration}">Зарегистрируйтесь</a>.</p>
-    <div th:if="${param.error}" class="alert alert-danger mt-3" role="alert">
-        <p>Неверный email или пароль.</p>
-    </div>
+    <p class="mt-3">Нет аккаунта? <a href="/registration">Зарегистрируйтесь</a>.</p>
+    <#if param.error??>
+        <div class="alert alert-danger mt-3" role="alert">
+            <p>Неверный email или пароль.</p>
+        </div>
+    </#if>
 </div>
 </body>
 </html>

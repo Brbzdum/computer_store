@@ -4,7 +4,7 @@
     <title>Вход</title>
 </head>
 <body>
-<#include "/templates/fragments/layout.ftlh">
+<#include "layout.ftlh">
 
 <div>
     <h1>Вход в систему</h1>

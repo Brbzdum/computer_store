@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ru" th:replace="~{fragments/layout :: layout}">
+<html lang="ru">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
     <title>Аналитика</title>
 </head>
 <body>
-<div th:fragment="content">
+<#include "layout.ftlh">
+
+<div>
     <h1>Аналитика</h1>
-    <form th:action="@{/admin/revenue}" method="get" class="row g-3 mb-4">
+    <form action="/admin/revenue" method="get" class="row g-3 mb-4">
         <div class="col-md-6">
             <label for="startDate" class="form-label">Начало периода</label>
             <input type="datetime-local" class="form-control" id="startDate" name="startDate" required>
@@ -21,26 +23,32 @@
             <button type="submit" class="btn btn-primary">Сформировать отчет</button>
         </div>
     </form>
-    <p><strong>Выручка:</strong> <span th:text="${revenue}">0</span> руб.</p>
+    <p><strong>Выручка:</strong> <span>${revenue! 0}</span> руб.</p>
 
     <section class="mt-5">
         <h2>Популярные товары</h2>
         <ul class="list-group mb-4">
-            <li class="list-group-item" th:each="product : ${popularProducts}" th:text="${product.name}">Товар</li>
+            <#list popularProducts as product>
+                <li class="list-group-item">${product.name! 'Товар'}</li>
+            </#list>
         </ul>
     </section>
 
     <section class="mt-5">
         <h2>Популярные категории</h2>
         <ul class="list-group mb-4">
-            <li class="list-group-item" th:each="entry : ${categoryPopularity}" th:text="${entry.key} + ' (' + ${entry.value} + ')'">Категория</li>
+            <#list categoryPopularity as entry>
+                <li class="list-group-item">${entry.key! 'Категория'} (${entry.value! 0})</li>
+            </#list>
         </ul>
     </section>
 
     <section class="mt-5">
         <h2>Популярные производители</h2>
         <ul class="list-group mb-4">
-            <li class="list-group-item" th:each="entry : ${manufacturerPopularity}" th:text="${entry.key} + ' (' + ${entry.value} + ')'">Производитель</li>
+            <#list manufacturerPopularity as entry>
+                <li class="list-group-item">${entry.key! 'Производитель'} (${entry.value! 0})</li>
+            </#list>
         </ul>
     </section>
 </div>

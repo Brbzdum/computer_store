@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout}">
+<html>
 <head>
     <title>Мои покупки</title>
 </head>
 <body>
-<div th:fragment="content">
+<#include "fragments/layout.ftlh">
+
+<div>
     <h1>Мои покупки</h1>
     <table class="table table-striped mt-4">
         <thead>
@@ -15,11 +17,13 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="purchase : ${purchases}">
-            <td th:text="${purchase.product.name}">Название товара</td>
-            <td th:text="${purchase.salePrice} + ' ₽'">Цена</td>
-            <td th:text="${purchase.saleDate}">Дата</td>
-        </tr>
+        <#list purchases as purchase>
+            <tr>
+                <td>${purchase.product.name! 'Название товара'}</td>
+                <td>${purchase.salePrice! '0'} ₽</td>
+                <td>${purchase.saleDate! 'Дата'}</td>
+            </tr>
+        </#list>
         </tbody>
     </table>
 </div>
