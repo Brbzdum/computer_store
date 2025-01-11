@@ -1,15 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout}">
 <head>
     <title>Мои покупки</title>
-    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<header>
+<div th:fragment="content">
     <h1>Мои покупки</h1>
-</header>
-<main>
-    <table>
+    <table class="table table-striped mt-4">
         <thead>
         <tr>
             <th>Название товара</th>
@@ -25,6 +22,6 @@
         </tr>
         </tbody>
     </table>
-</main>
+</div>
 </body>
 </html>

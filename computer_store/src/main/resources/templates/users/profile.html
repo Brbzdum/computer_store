@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout}">
+<head>
+    <title>Профиль пользователя</title>
+</head>
+<body>
+<div th:fragment="content">
+    <h1>Ваш профиль</h1>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${user.name}">Имя пользователя</h5>
+            <p class="card-text"><strong>Email:</strong> <span th:text="${user.email}">email@example.com</span></p>
+            <p class="card-text"><strong>Роли:</strong>
+                <span th:each="role : ${user.roles}" th:text="${role.name} + ' '"></span>
+            </p>
+            <a th:href="@{/users/profile/purchases}" class="btn btn-primary">Мои покупки</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

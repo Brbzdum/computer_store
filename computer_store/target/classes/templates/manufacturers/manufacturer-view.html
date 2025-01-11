@@ -1,33 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout}">
 <head>
-    <title>Список товаров</title>
+    <title th:text="'Производитель: ' + ${manufacturer.name}">Производитель</title>
 </head>
 <body>
 <div th:fragment="content">
-    <h1>Список товаров</h1>
-    <!-- Форма для фильтрации -->
-    <form method="get" th:action="@{/products}" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <label for="category" class="form-label">Категория:</label>
+    <h1 th:text="${manufacturer.name}">Название производителя</h1>
+    <p th:text="${manufacturer.description}">Описание производителя</p>
+
+    <h2>Продукция</h2>
+    <!-- Форма для фильтрации по категориям -->
+    <form method="get" th:action="@{/manufacturers/{id}(id=${manufacturer.id})}" class="row g-3 mb-4">
+        <div class="col-md-6">
+            <label for="category" class="form-label">Фильтр по категории:</label>
             <select name="categoryId" id="category" class="form-select">
                 <option value="" selected>Все категории</option>
                 <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
             </select>
         </div>
-        <div class="col-md-4">
-            <label for="manufacturer" class="form-label">Производитель:</label>
-            <select name="manufacturerId" id="manufacturer" class="form-select">
-                <option value="" selected>Все производители</option>
-                <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.id}" th:text="${manufacturer.name}"></option>
-            </select>
-        </div>
-        <div class="col-md-4 align-self-end">
-            <button type="submit" class="btn btn-primary">Фильтровать</button>
+        <div class="col-md-6 align-self-end">
+            <button type="submit" class="btn btn-primary">Применить</button>
         </div>
     </form>
 
-    <!-- Список товаров -->
+    <!-- Список продуктов -->
     <div class="row">
         <div class="col-md-4 mb-4" th:each="product : ${products}">
             <div class="card h-100">
@@ -35,6 +31,7 @@
                 <div class="card-body">
                     <h5 class="card-title" th:text="${product.name}">Название товара</h5>
                     <p class="card-text" th:text="'Цена: ' + ${product.price} + ' ₽'">Цена</p>
+                    <p class="card-text" th:text="'Категория: ' + ${product.category.name}">Категория</p>
                     <a th:href="@{/products/{id}(id=${product.id})}" class="btn btn-primary">Подробнее</a>
                 </div>
             </div>

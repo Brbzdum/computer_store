@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout}">
 <head>
     <title>Активация аккаунта</title>
-    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<header>
+<div th:fragment="content">
     <h1>Активация аккаунта</h1>
-</header>
-<main>
     <p th:text="${message}">Результат активации</p>
-    <a th:href="@{/users/login}">Перейти на страницу входа</a>
-</main>
+    <a th:href="@{/login}" class="btn btn-primary">Перейти на страницу входа</a>
+</div>
 </body>
 </html>
