@@ -1,29 +1,35 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="base.html :: header(admin)"></head>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Добавить товар</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
 <body>
-<div th:replace="base.html :: content">
-    <h1 class="text-center">Добавление нового товара</h1>
-    <form action="/admin/products/save" method="post" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="name" class="form-label">Название</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-        </div>
-        <div class="mb-3">
-            <label for="price" class="form-label">Цена</label>
-            <input type="number" class="form-control" id="price" name="price" required>
-        </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">Описание</label>
-            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="image" class="form-label">Изображение</label>
-            <input type="file" class="form-control" id="image" name="image">
-        </div>
-        <button type="submit" class="btn btn-primary">Сохранить</button>
+<header>
+    <h1>Добавить товар</h1>
+</header>
+<main>
+    <form th:action="@{/admin/product/add}" method="post" enctype="multipart/form-data">
+        <label>Название:</label>
+        <input type="text" name="name" required />
+        <label>Описание:</label>
+        <textarea name="description" required></textarea>
+        <label>Цена:</label>
+        <input type="number" name="price" required />
+        <label>Категория:</label>
+        <select name="categoryId" required>
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+        </select>
+        <label>Производитель:</label>
+        <select name="manufacturerId" required>
+            <option th:each="manufacturer : ${manufacturers}" th:value="${manufacturer.id}" th:text="${manufacturer.name}"></option>
+        </select>
+        <label>Главное изображение:</label>
+        <input type="file" name="mainImage" required />
+        <label>Дополнительные изображения:</label>
+        <input type="file" name="additionalImages" multiple />
+        <button type="submit">Добавить</button>
     </form>
-</div>
-<footer th:replace="base.html :: footer"></footer>
+</main>
 </body>
 </html>

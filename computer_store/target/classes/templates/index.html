@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Магазин Компьютеров</title>
     <link rel="stylesheet" href="/css/styles.css">
@@ -11,7 +11,7 @@
         <a th:href="@{/products}">Товары</a> |
         <a th:href="@{/categories}">Категории</a> |
         <a th:href="@{/manufacturers}">Производители</a> |
-        <a th:href="@{/admin}" th:if="${#authorization.expression('hasRole(\'ROLE_ADMIN\')')}">Админ Панель</a> |
+        <a sec:authorize="hasRole('ROLE_ADMIN')">Админ Панель</a> |
         <a th:href="@{/profile}" th:if="${#authorization.authenticated}">Профиль</a> |
         <a th:href="@{/logout}" th:if="${#authorization.authenticated}">Выйти</a>
         <a th:href="@{/login}" th:if="${#authorization.anonymous}">Войти</a>

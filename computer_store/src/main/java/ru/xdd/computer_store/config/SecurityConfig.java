@@ -28,6 +28,7 @@ public class SecurityConfig {
                         .requestMatchers("/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )
+
                 .formLogin(form -> form
                         .loginPage("/login") // Страница логина
                         .defaultSuccessUrl("/profile", true) // Перенаправление после успешного входа

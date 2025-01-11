@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'Производитель: ' + ${manufacturer.name}">Производитель</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1 th:text="${manufacturer.name}">Название производителя</h1>
+</header>
+<main>
+    <section>
+        <h2>Продукция</h2>
+        <!-- Форма для фильтрации по категориям -->
+        <form method="get" th:action="@{/manufacturers/{id}(id=${manufacturer.id})}">
+            <label for="category">Фильтр по категории:</label>
+            <select name="categoryId" id="category">
+                <option value="">Все категории</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+            </select>
+            <button type="submit">Применить</button>
+        </form>
+
+        <!-- Список продуктов -->
+        <div class="product-list">
+            <div class="product-item" th:each="product : ${products}">
+                <h3 th:text="${product.name}">Название товара</h3>
+                <p th:text="'Цена: ' + ${product.price} + ' ₽'">Цена</p>
+                <p th:text="'Категория: ' + ${product.category.name}">Категория</p>
+                <a th:href="@{/products/{id}(id=${product.id})}">Подробнее</a>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

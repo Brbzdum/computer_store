@@ -316,5 +316,6 @@ public class AdminController {
         categoryService.deleteCategory(id);
         return "redirect:/admin/categories";
     }
+
 }
 

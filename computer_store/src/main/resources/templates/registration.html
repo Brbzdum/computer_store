@@ -2,25 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Регистрация</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-<div>
+<header>
     <h1>Регистрация</h1>
-    <form th:action="@{/registration}" method="post">
-        <label for="email">Электронная почта:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        <label for="name">Имя:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
-        <label for="phone">Телефон:</label>
-        <input type="tel" id="phone" name="phone" required>
-        <br>
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
+</header>
+<main>
+    <form th:action="@{/users/registration}" method="post" th:object="${user}">
+        <div>
+            <label for="name">Имя:</label>
+            <input type="text" id="name" th:field="*{name}" placeholder="Введите имя" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" th:field="*{email}" placeholder="Введите email" required>
+        </div>
+        <div>
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" th:field="*{password}" placeholder="Введите пароль" required>
+        </div>
         <button type="submit">Зарегистрироваться</button>
     </form>
-</div>
+    <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red;"></p>
+</main>
 </body>
 </html>
