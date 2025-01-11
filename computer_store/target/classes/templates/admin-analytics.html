@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Аналитика</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<header>
+    <h1>Аналитика</h1>
+</header>
+<main>
+    <section>
+        <h2>Популярные товары</h2>
+        <ul>
+            <li th:each="product : ${popularProducts}" th:text="${product.name}"></li>
+        </ul>
+    </section>
+    <section>
+        <h2>Популярные категории</h2>
+        <ul>
+            <li th:each="entry : ${categoryPopularity}" th:text="${entry.key} + ' (' + entry.value + ')'"></li>
+        </ul>
+    </section>
+    <section>
+        <h2>Популярные производители</h2>
+        <ul>
+            <li th:each="entry : ${manufacturerPopularity}" th:text="${entry.key} + ' (' + entry.value + ')'"></li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>
