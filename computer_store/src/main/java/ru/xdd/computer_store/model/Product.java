@@ -51,9 +51,6 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String sku; // Уникальный код товара
-
     @Column(nullable = false)
     private int stock; // Остатки товара
 

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.xdd.computer_store.model.Category;
+import ru.xdd.computer_store.model.Manufacturer;
 import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.repository.ProductRepository;
 
@@ -17,9 +18,13 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
+    private final ManufacturerService manufacturerService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService, ManufacturerService manufacturerService) {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
+        this.manufacturerService = manufacturerService;
     }
 
     public List<Product> getAllProducts() {
@@ -36,9 +41,13 @@ public class ProductService {
      * Получение всех категорий (заглушка).
      */
     public List<Category> getAllCategories() {
-        // Реализуйте через CategoryRepository или добавьте ваш способ получения категорий
-        return new ArrayList<>(); // Временная заглушка
+        return categoryService.getAllCategories();
     }
+    public List<Manufacturer> getAllManufacturers() {
+        return manufacturerService.getAllManufacturers();
+    }
+
+
     @Transactional
     public void saveProductWithImages(Product product, MultipartFile mainImageFile, MultipartFile[] additionalImageFiles) throws IOException {
         if (!mainImageFile.isEmpty()) {

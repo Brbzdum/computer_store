@@ -14,12 +14,13 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 100)
-    private String name; // Название категории
+    @Column(name = "name", nullable = false, unique = true, length = 100)
+    private String name;
 
-    @Column(length = 500)
-    private String description; // Дополнительное описание категории
+    @Column(name = "description", length = 500)
+    private String description;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 }
+

@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.authentication.AuthenticationManager;
 import ru.xdd.computer_store.service.CustomUserDetailsService;
 
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -22,24 +23,27 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/product/**", "/registration", "/user/activate/**", "/static/**", "/login").permitAll() // Публичные маршруты
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/profile/**").authenticated()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/users/login", "/users/registration", "/users/activate/**", "/products/**", "/manufacturers/**", "/custom-error", "/403").permitAll()
+                        .anyRequest().permitAll()
+
                 )
 
+
                 .formLogin(form -> form
-                        .loginPage("/login") // Страница логина
-                        .defaultSuccessUrl("/profile", true) // Перенаправление после успешного входа
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
+
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .exceptionHandling(ex -> ex.accessDeniedPage("/403")); // Страница ошибки доступа
+                .exceptionHandling(exception -> exception.accessDeniedPage("/403")); // Страница ошибки доступа
         return http.build();
     }
 

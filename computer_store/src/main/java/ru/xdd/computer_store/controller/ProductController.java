@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.xdd.computer_store.model.Category;
+import ru.xdd.computer_store.model.Manufacturer;
 import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.service.ProductService;
 
@@ -28,8 +30,16 @@ public class ProductController {
                                @RequestParam(required = false) Long manufacturerId,
                                Model model) {
         List<Product> products = productService.filterProducts(categoryId, manufacturerId);
+        List<Category> categories = productService.getAllCategories();
+        List<Manufacturer> manufacturers = productService.getAllManufacturers();
+
+        model.addAttribute("content", "products/list");
         model.addAttribute("products", products);
-        return "products/list"; // Шаблон для отображения списка товаров
+        model.addAttribute("categories", categories);
+        model.addAttribute("manufacturers", manufacturers);
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("selectedManufacturerId", manufacturerId);
+        return "products/list";
     }
 
 
@@ -41,6 +51,12 @@ public class ProductController {
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Товар не найден с ID: " + id));
         model.addAttribute("product", product);
+
+        model.addAttribute("content", "products/view");
+
         return "products/view"; // Шаблон для отображения информации о товаре
     }
+
+
+
 }
