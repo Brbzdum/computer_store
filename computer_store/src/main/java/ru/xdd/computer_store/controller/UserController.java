@@ -33,7 +33,8 @@ public class UserController {
         } else {
             model.addAttribute("user", new User());
         }
-        return "login";
+        model.addAttribute("content", "user/login.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
 
     /**
@@ -43,18 +44,9 @@ public class UserController {
     public String profile(Principal principal, Model model) {
         User user = userService.getUserByPrincipal(principal);
         model.addAttribute("user", user);
-        return "profile";
+        model.addAttribute("content", "user/profile.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
-
-    @PostMapping("/admin/user/roles/{id}")
-    public String editUserRoles(@PathVariable Long id, @RequestParam Map<String, String> form) {
-        User user = userService.getUserById(id);
-        userService.changeUserRoles(user, form);
-        return "redirect:/users";
-    }
-
-
-
 
     /**
      * Страница регистрации.
@@ -62,7 +54,8 @@ public class UserController {
     @GetMapping("/registration")
     public String registration(Model model) {
         model.addAttribute("user", new User());
-        return "registration";
+        model.addAttribute("content", "user/registration.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
 
     /**
@@ -74,13 +67,15 @@ public class UserController {
                                Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorMessage", "Некорректно заполнены поля формы");
-            return "registration";
+            model.addAttribute("content", "user/registration.ftlh");
+            return "layout";
         }
 
         boolean created = userService.createUser(user);
         if (!created) {
             model.addAttribute("errorMessage", "Пользователь с таким email уже существует!");
-            return "registration";
+            model.addAttribute("content", "user/registration.ftlh");
+            return "layout";
         }
         model.addAttribute("message", "На вашу почту отправлено письмо для подтверждения регистрации.");
         return "redirect:/users/login";
@@ -97,9 +92,9 @@ public class UserController {
         } else {
             model.addAttribute("message", "Код активации недействителен!");
         }
-        return "login";
+        model.addAttribute("content", "user/activate.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
-
 
     /**
      * Удаление пользователя (админский функционал).
@@ -115,9 +110,11 @@ public class UserController {
      * Страница "Мои покупки".
      */
     @GetMapping("/profile/purchases")
-    public String listUserPurchases(User buyer, Model model) {
+    public String listUserPurchases(Principal principal, Model model) {
+        User buyer = userService.getUserByPrincipal(principal);
         List<Sale> purchases = saleService.getUserPurchases(buyer);
         model.addAttribute("purchases", purchases);
-        return "profile/purchases"; // Шаблон для отображения покупок
+        model.addAttribute("content", "user/purchases.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
 }

@@ -26,25 +26,24 @@ public class ManufacturerController {
     public String getAllManufacturers(Model model) {
         List<Manufacturer> manufacturers = manufacturerService.getAllManufacturers();
         model.addAttribute("manufacturers", manufacturers);
-        return "manufacturer-list"; // Шаблон для отображения списка производителей
+        model.addAttribute("content", "manufacturers/manufacturer-list.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
 
     /**
-     * Просмотр информации о производителе и его продуктах с фильтрацией по категориям.
+     * Просмотр информации о производителе и его продуктах.
      */
     @GetMapping("/{id}")
-    public String viewManufacturer(@PathVariable Long id,
-                                   @RequestParam(required = false) Long categoryId,
-                                   Model model) {
+    public String viewManufacturer(@PathVariable Long id, Model model) {
         Manufacturer manufacturer = manufacturerService.getManufacturerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Производитель не найден с ID: " + id));
 
-        // Используем метод filterProducts вместо нового метода
-        List<Product> products = productService.getProductsByFilter(categoryId, id);
+        // Получение всех продуктов данного производителя
+        List<Product> products = productService.getProductsByManufacturerId(id);
+
         model.addAttribute("manufacturer", manufacturer);
         model.addAttribute("products", products);
-        model.addAttribute("categories", productService.getAllCategories()); // Для фильтрации
-        return "manufacturer-view"; // Шаблон для отображения страницы производителя
+        model.addAttribute("content", "manufacturers/manufacturer-view.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
 }
-

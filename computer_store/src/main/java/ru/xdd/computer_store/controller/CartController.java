@@ -28,8 +28,10 @@ public class CartController {
         Cart cart = cartService.getCartByUser(user);
 
         model.addAttribute("cart", cart);
-        return "cart/view";
+        model.addAttribute("content", "cart/view.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
     }
+
 
     @PostMapping("/add")
     public String addItemToCart(@RequestParam Long productId,

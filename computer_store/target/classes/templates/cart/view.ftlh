@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Корзина</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
-<#include "../layout.ftlh">
-
 <div class="container mt-4">
     <h1 class="text-center mb-4">Корзина</h1>
     <#if cart.items?size == 0>
         <p class="text-center">Ваша корзина пуста.</p>
     <#else>
-        <table class="table">
+        <table class="table table-striped">
             <thead>
             <tr>
                 <th>Товар</th>
@@ -25,23 +16,24 @@
             <#list cart.items as item>
                 <tr>
                     <td>${item.product.title}</td>
-                    <td>${item.product.price}</td>
+                    <td>${item.product.price} ₽</td>
                     <td>${item.quantity}</td>
                     <td>
-                        <form action="/cart/remove/${item.id}" method="post">
+                        <form action="/cart/remove" method="post" style="display:inline;">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
-                            <button type="submit" class="btn btn-danger">Удалить</button>
+                            <input type="hidden" name="productId" value="${item.product.id}"/>
+                            <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                         </form>
                     </td>
                 </tr>
             </#list>
             </tbody>
         </table>
-        <form action="/cart/checkout" method="post">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
-            <button type="submit" class="btn btn-success w-100">Оформить заказ</button>
-        </form>
+        <div class="text-center mt-4">
+            <form action="/cart/checkout" method="post">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
+                <button type="submit" class="btn btn-success btn-lg w-100">Оформить заказ</button>
+            </form>
+        </div>
     </#if>
 </div>
-</body>
-</html>

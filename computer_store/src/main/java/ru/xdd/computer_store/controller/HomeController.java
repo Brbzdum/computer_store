@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-    @GetMapping("/home")
-    public String homePage(Model model) {
-        model.addAttribute("content", "Здесь будет ваш контент"); // или передайте контент из других переменных
-        return "home";
+    @GetMapping("/")
+    public String home(Model model) {
+        model.addAttribute("content", "home.ftlh"); // Указываем путь к шаблону главной страницы
+        return "layout"; // Возвращаем базовый шаблон
     }
 
 

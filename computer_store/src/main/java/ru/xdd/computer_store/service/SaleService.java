@@ -68,10 +68,7 @@ public class SaleService {
                 .collect(Collectors.groupingBy(Sale::getProduct, Collectors.counting()));
     }
 
-    public Map<Category, Long> getCategoryPopularity() {
-        return saleRepository.findAll().stream()
-                .collect(Collectors.groupingBy(sale -> sale.getProduct().getCategory(), Collectors.counting()));
-    }
+
 
     public Map<Manufacturer, Long> getManufacturerPopularity() {
         return saleRepository.findAll().stream()

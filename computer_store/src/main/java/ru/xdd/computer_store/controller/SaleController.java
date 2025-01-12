@@ -46,12 +46,14 @@ public class SaleController {
         try {
             // Завершаем продажу через сервис
             saleService.completeSale(productId, buyerEmail);
-            model.addAttribute("message", "Покупка успешно завершена");
-            return "success"; // Страница подтверждения
+            model.addAttribute("content", "success.ftlh"); // Указываем путь к шаблону успеха
+            return "layout"; // Возвращаем базовый шаблон
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "error"; // Страница ошибки
+            model.addAttribute("content", "error.ftlh"); // Указываем путь к шаблону ошибки
+            return "layout"; // Возвращаем базовый шаблон
         }
     }
+
 }
 

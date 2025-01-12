@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Админка</title>
-</head>
-<body>
-<#include "../layout.ftlh">
-
-<div>
-    <h1>Административная панель</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Административная панель</h1>
 
     <!-- Раздел Пользователи -->
     <section class="mb-5">
@@ -81,5 +73,3 @@
         </table>
     </section>
 </div>
-</body>
-</html>

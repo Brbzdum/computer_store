@@ -1,16 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Покупка завершена</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-<header>
-    <h1>Покупка успешно завершена</h1>
-</header>
-<main>
+<div class="container mt-4 text-center">
+    <h1 class="mb-4">Покупка успешно завершена</h1>
     <p>Спасибо за покупку! Мы отправили подтверждение на вашу электронную почту.</p>
-    <a href="/products">Вернуться к списку товаров</a>
-</main>
-</body>
-</html>
+    <a href="/products" class="btn btn-primary mt-3">Вернуться к списку товаров</a>
+</div>

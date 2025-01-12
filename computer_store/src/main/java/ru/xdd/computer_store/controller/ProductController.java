@@ -3,13 +3,10 @@ package ru.xdd.computer_store.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import ru.xdd.computer_store.model.Category;
 import ru.xdd.computer_store.model.Manufacturer;
 import ru.xdd.computer_store.model.Product;
 import ru.xdd.computer_store.service.ProductService;
 
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -26,24 +23,23 @@ public class ProductController {
      * Отображение списка товаров с возможностью фильтрации.
      */
     @GetMapping
-    public String listProducts(@RequestParam(required = false) Long categoryId,
-                               @RequestParam(required = false) Long manufacturerId,
-                               Model model) {
-        List<Product> products = productService.getProductsByFilter(categoryId, manufacturerId);
-        List<Category> categories = productService.getAllCategories();
+    public String listProducts(Model model) {
+        List<Product> products = productService.getAllProducts();
         List<Manufacturer> manufacturers = productService.getAllManufacturers();
 
-        model.addAttribute("content", "products/list");
+        model.addAttribute("content", "products/list.ftlh"); // Обновите путь, если нужно
         model.addAttribute("products", products);
-        model.addAttribute("categories", categories);
         model.addAttribute("manufacturers", manufacturers);
-        model.addAttribute("selectedCategoryId", categoryId != null ? categoryId : "");
-        model.addAttribute("selectedManufacturerId", manufacturerId != null ? manufacturerId : "");
-        return "products/list";
+        return "layout"; // Возвращайте базовый шаблон
     }
 
 
 
+
+
+    /**
+     * Просмотр информации о конкретном товаре.
+     */
     /**
      * Просмотр информации о конкретном товаре.
      */
@@ -51,12 +47,13 @@ public class ProductController {
     public String viewProduct(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Товар не найден с ID: " + id));
+
         model.addAttribute("product", product);
+        model.addAttribute("content", "products/view.ftlh"); // Указываем путь к шаблону
 
-        model.addAttribute("content", "products/view");
-
-        return "products/view"; // Шаблон для отображения информации о товаре
+        return "layout"; // Возвращаем базовый шаблон
     }
+
 
 
 

@@ -33,7 +33,6 @@ public class AdminController {
 
     private final UserService userService;
     private final ProductService productService;
-    private final CategoryService categoryService;
     private final ManufacturerService manufacturerService;
     private final SaleService saleService;
     private final SaleRepository saleRepository;
@@ -42,11 +41,11 @@ public class AdminController {
     public String adminPage(Model model, Principal principal) {
         model.addAttribute("users", userService.list());
         model.addAttribute("products", productService.getAllProducts());
-        model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
         model.addAttribute("sales", saleService.list());
         model.addAttribute("user", userService.getUserByPrincipal(principal));
-        return "admin";
+        model.addAttribute("content", "admin.ftlh"); // Указываем путь к шаблону административной панели
+        return "layout";
     }
 
     @PostMapping("/user/ban/{id}")
@@ -73,16 +72,19 @@ public class AdminController {
                              Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorMessage", "Некорректно заполнены поля");
-            return "admin/product-add";
+            model.addAttribute("content", "admin/product-add.ftlh"); // Возвращаем страницу добавления
+            return "layout";
         }
         try {
             productService.saveProductWithImages(product, mainImageFile, additionalImageFiles);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Ошибка при сохранении изображения");
-            return "admin/product-add";
+            model.addAttribute("content", "admin/product-add.ftlh"); // Возвращаем страницу добавления
+            return "layout";
         }
         return "redirect:/admin";
     }
+
     /**
      * Редактирование продукта.
      */
@@ -95,7 +97,8 @@ public class AdminController {
                               Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorMessage", "Некорректно заполнены поля");
-            return "admin/product-edit";
+            model.addAttribute("content", "admin/product-edit.ftlh");
+            return "layout";
         }
         try {
             productService.updateProductWithImages(id, product, mainImageFile, additionalImageFiles);
@@ -117,7 +120,6 @@ public class AdminController {
     @GetMapping("/analytics")
     public String analytics(Model model) {
         model.addAttribute("popularProducts", saleService.getPopularProducts());
-        model.addAttribute("categoryPopularity", saleService.getCategoryPopularity());
         model.addAttribute("manufacturerPopularity", saleService.getManufacturerPopularity());
         return "admin-analytics"; // Шаблон для аналитики
     }
@@ -260,61 +262,7 @@ public class AdminController {
         manufacturerService.deleteManufacturer(id);
         return "redirect:/admin/manufacturers";
     }
-    /**
-     * Список всех категорий.
-     */
-    @GetMapping("/categories")
-    public String getAllCategories(Model model) {
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "admin/category-list"; // Шаблон для отображения списка категорий
-    }
 
-    /**
-     * Страница добавления новой категории.
-     */
-    @GetMapping("/categories/add")
-    public String addCategoryPage(Model model) {
-        model.addAttribute("category", new Category());
-        return "admin/category-add"; // Шаблон для добавления категории
-    }
-
-    /**
-     * Добавление новой категории.
-     */
-    @PostMapping("/categories/add")
-    public String addCategory(@ModelAttribute Category category) {
-        categoryService.saveCategory(category);
-        return "redirect:/admin/categories";
-    }
-
-    /**
-     * Страница редактирования категории.
-     */
-    @GetMapping("/categories/edit/{id}")
-    public String editCategoryPage(@PathVariable Long id, Model model) {
-        Category category = categoryService.getCategoryById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Категория не найдена с ID: " + id));
-        model.addAttribute("category", category);
-        return "admin/category-edit"; // Шаблон для редактирования категории
-    }
-
-    /**
-     * Обновление категории.
-     */
-    @PostMapping("/categories/edit")
-    public String editCategory(@ModelAttribute Category category) {
-        categoryService.saveCategory(category);
-        return "redirect:/admin/categories";
-    }
-
-    /**
-     * Удаление категории.
-     */
-    @PostMapping("/categories/delete/{id}")
-    public String deleteCategory(@PathVariable Long id) {
-        categoryService.deleteCategory(id);
-        return "redirect:/admin/categories";
-    }
 
 }
 
