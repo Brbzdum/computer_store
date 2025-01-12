@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>${product.title! 'Товар'}</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
-<body>
-<#include "../layout.ftlh">
-
 <div class="container mt-4">
     <h1 class="text-center mb-4">${product.title! 'Название товара'}</h1>
     <div class="row">
@@ -37,5 +28,3 @@
         </div>
     </div>
 </div>
-</body>
-</html>

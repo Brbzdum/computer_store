@@ -47,9 +47,6 @@ public class Product {
     @JoinColumn(name = "manufacturer_id", nullable = false) // Связь с таблицей производителей
     private Manufacturer manufacturer;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
 
     @Column(nullable = false)
     private int stock; // Остатки товара

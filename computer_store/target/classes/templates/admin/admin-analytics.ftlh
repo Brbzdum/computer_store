@@ -35,15 +35,6 @@
     </section>
 
     <section class="mt-5">
-        <h2>Популярные категории</h2>
-        <ul class="list-group mb-4">
-            <#list categoryPopularity as entry>
-                <li class="list-group-item">${entry.key! 'Категория'} (${entry.value! 0})</li>
-            </#list>
-        </ul>
-    </section>
-
-    <section class="mt-5">
         <h2>Популярные производители</h2>
         <ul class="list-group mb-4">
             <#list manufacturerPopularity as entry>

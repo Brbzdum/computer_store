@@ -5,7 +5,7 @@
     <#include "fragments/header.ftlh">
 </header>
 <main>
-    ${content}
+    <#include content>
 </main>
 <footer>
     <#include "fragments/footer.ftlh">
