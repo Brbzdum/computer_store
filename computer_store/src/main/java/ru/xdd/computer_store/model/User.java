@@ -32,12 +32,6 @@ public class User implements UserDetails {
     @Email(message = "Некорректный формат email")
     private String email;
 
-    @Column(nullable = false, unique = true, length = 20)
-    @NotBlank(message = "Номер телефона не может быть пустым")
-    @Size(max = 20, message = "Номер телефона не может содержать больше 20 символов")
-    @Pattern(regexp = "^(\\+7|7|8)\\(?\\d{3}\\)?\\d{3}-\\d{2}-\\d{2}$", message = "Номер телефона должен быть в формате +7(XXX)XXX-XX-XX или 8(XXX)XXX-XX-XX")
-    private String phoneNumber;
-
     @Column(nullable = false, length = 50)
     @NotBlank(message = "Имя не может быть пустым")
     @Size(max = 30, message = "Имя не может содержать больше 30 символов")
@@ -55,7 +49,7 @@ public class User implements UserDetails {
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
 

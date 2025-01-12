@@ -27,7 +27,6 @@
                     <td>${user.active?string("Активен", "Забанен")}</td>
                     <td>
                         <form action="/admin/user/ban/${user.id}" method="post" style="display:inline;">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                             <button type="submit" class="btn btn-warning btn-sm">
                                 ${user.active?string("Забанить", "Разбанить")}
                             </button>
@@ -63,7 +62,6 @@
                     <td>
                         <a href="/admin/product/edit/${product.id}" class="btn btn-primary btn-sm">Редактировать</a>
                         <form action="/admin/product/delete/${product.id}" method="post" style="display:inline;">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Вы уверены?')">Удалить</button>
                         </form>
                     </td>

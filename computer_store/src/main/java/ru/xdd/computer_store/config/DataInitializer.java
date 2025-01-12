@@ -26,7 +26,6 @@ public class DataInitializer implements CommandLineRunner {
             User admin = new User();
             admin.setName("admin");
             admin.setEmail("admin@example.com");
-            admin.setPhoneNumber("+7(977)777-77-77");
             admin.setPassword(passwordEncoder.encode("admin")); // Пароль зашифрован
             admin.setActive(true);
             admin.getRoles().add(Role.ROLE_ADMIN); // Добавляем роль администратора

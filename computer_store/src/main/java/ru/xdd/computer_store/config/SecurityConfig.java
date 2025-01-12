@@ -7,7 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -23,7 +23,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
@@ -31,10 +31,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/users/login") // Путь к вашей кастомной странице логина
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true) // Куда перенаправлять после успешного логина
-                        .failureUrl("/users/login?error=true") // Куда перенаправлять при ошибке
+                        .loginPage("/users/login") // Кастомная страница логина
+                        .loginProcessingUrl("/login") // Обработчик логина
+                        .usernameParameter("email") // Указываем, что поле для имени пользователя - это email
+                        .passwordParameter("password") // Поле для пароля остаётся стандартным
+                        .defaultSuccessUrl("/", true) // Перенаправление после успешного логина
+                        .failureUrl("/users/login?error=true") // Перенаправление при ошибке логина
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -59,6 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10); // 10 - степень сложности
+        return new BCryptPasswordEncoder(10); // Степень сложности
     }
 }
+

@@ -13,7 +13,6 @@
                             <p class="card-text">Цена: ${product.price! '0.00'} ₽</p>
                             <a href="/products/${product.id}" class="btn btn-primary">Подробнее</a>
                             <form action="/cart/add" method="post" class="mt-2">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                                 <input type="hidden" name="productId" value="${product.id! ''}"/>
                                 <button type="submit" class="btn btn-success">Добавить в корзину</button>
                             </form>

@@ -20,7 +20,6 @@
             <p><strong>Цена:</strong> ${product.price! '0.00'} ₽</p>
             <p><strong>Количество на складе:</strong> ${product.stock! '0'}</p>
             <form action="/cart/add" method="post" class="mt-3">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                 <input type="hidden" name="productId" value="${product.id! ''}"/>
                 <button type="submit" class="btn btn-success">Добавить в корзину</button>
             </form>

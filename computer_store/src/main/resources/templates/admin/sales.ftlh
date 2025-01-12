@@ -25,7 +25,6 @@
                 <td>
                     <form action="/admin/sales/delete" method="post" style="display:inline;">
                         <input type="hidden" name="saleId" value="${sale.id}">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                         <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                     </form>
                 </td>

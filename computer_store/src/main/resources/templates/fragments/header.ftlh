@@ -49,7 +49,6 @@
                     <li class="nav-item"><a class="nav-link" href="/users/profile">Профиль</a></li>
                     <li class="nav-item">
                         <form action="/logout" method="post" class="d-inline">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                             <button type="submit" class="btn btn-link nav-link" style="display: inline; cursor: pointer;">Выйти</button>
                         </form>
                     </li>

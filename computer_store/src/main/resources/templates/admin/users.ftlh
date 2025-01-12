@@ -25,7 +25,6 @@
                 <td>${user.active?string("Активен", "Забанен")}</td>
                 <td>
                     <form action="/admin/user/ban/${user.id}" method="post" style="display:inline;">
-                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
                         <button type="submit" class="btn btn-warning btn-sm">${user.active?string("Забанить", "Разбанить")}</button>
                     </form>
                 </td>
