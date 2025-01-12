@@ -53,10 +53,35 @@ public class CartService {
         cartRepository.save(cart);
     }
 
+    @Transactional
+    public void checkoutCart(User user) {
+        Cart cart = getCartByUser(user);
+
+        // Проверяем, что всех товаров хватает на складе
+        for (CartItem item : cart.getItems()) {
+            Product product = item.getProduct();
+            if (product.getStock() < item.getQuantity()) {
+                throw new IllegalArgumentException("Недостаточно товара на складе: " + product.getTitle());
+            }
+        }
+
+        // Уменьшаем остатки и очищаем корзину
+        for (CartItem item : cart.getItems()) {
+            Product product = item.getProduct();
+            product.setStock(product.getStock() - item.getQuantity());
+            productRepository.save(product);
+        }
+
+        // Очищаем корзину
+        cart.getItems().clear();
+        cartRepository.save(cart);
+    }
+
     private Cart createCartForUser(User user) {
         Cart cart = new Cart();
         cart.setUser(user);
         return cartRepository.save(cart);
     }
 }
+
 

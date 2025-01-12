@@ -15,39 +15,52 @@ import ru.xdd.computer_store.service.UserService;
 import java.security.Principal;
 
 @Controller
-@RequestMapping("/cart")
 @RequiredArgsConstructor
+@RequestMapping("/cart")
 public class CartController {
-
     private final CartService cartService;
     private final UserService userService;
 
     @GetMapping
     public String viewCart(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/users/login";
+        }
         User user = userService.getUserByPrincipal(principal);
         Cart cart = cartService.getCartByUser(user);
-
         model.addAttribute("cart", cart);
-        model.addAttribute("content", "cart/view.ftlh"); // Указываем путь к шаблону
-        return "layout"; // Возвращаем базовый шаблон
-    }
-
-
-    @PostMapping("/add")
-    public String addItemToCart(@RequestParam Long productId,
-                                @RequestParam int quantity,
-                                Principal principal) {
-        User user = userService.getUserByPrincipal(principal);
-        cartService.addItemToCart(user, productId, quantity);
-        return "redirect:/cart";
+        model.addAttribute("cartItemCount", cart.getItems().size());
+        model.addAttribute("content", "cart/view.ftlh");
+        return "layout";
     }
 
     @PostMapping("/remove")
-    public String removeItemFromCart(@RequestParam Long productId,
-                                     Principal principal) {
+    public String removeItemFromCart(@RequestParam Long productId, Principal principal) {
+        if (principal == null) {
+            return "redirect:/users/login";
+        }
         User user = userService.getUserByPrincipal(principal);
         cartService.removeItemFromCart(user, productId);
         return "redirect:/cart";
     }
+
+    @PostMapping("/checkout")
+    public String checkoutCart(Principal principal) {
+        if (principal == null) {
+            return "redirect:/users/login";
+        }
+
+        User user = userService.getUserByPrincipal(principal);
+
+        try {
+            cartService.checkoutCart(user);
+            return "redirect:/cart?success";
+        } catch (IllegalArgumentException e) {
+            return "redirect:/cart?error=" + e.getMessage();
+        }
+    }
 }
+
+
+
 
