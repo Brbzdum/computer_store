@@ -38,7 +38,7 @@ public class UserService {
         // Отправляем письмо активации
         emailService.sendActivationEmail(
                 user.getEmail(),
-                "http://localhost:8080/activate/" + user.getActivationCode()
+                "http://localhost:8080/users/activate/" + user.getActivationCode()
         );
 
         return true;

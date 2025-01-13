@@ -50,7 +50,7 @@
         <!-- Дата создания (только отображение) -->
         <div class="mb-3">
             <label for="createdAt" class="form-label">Дата создания</label>
-            <input type="text" id="createdAt" name="createdAt" class="form-control" value="${productDto.createdAt?string("yyyy-MM-dd HH:mm:ss")}" readonly>
+            <input type="text" id="createdAt" name="createdAt" class="form-control" value="${.now?string("yyyy-MM-dd HH:mm:ss")}" readonly>
         </div>
 
         <!-- Текущее изображение -->
