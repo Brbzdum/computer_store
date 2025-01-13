@@ -54,8 +54,8 @@
                     </li>
                 <#else>
                     <!-- Авторизация -->
-                    <li class="nav-item"><a class="nav-link" href="/login">Войти</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/registration">Регистрация</a></li>
+                    <li class="nav-item"><a class="nav-link" href="users/login">Войти</a></li>
+                    <li class="nav-item"><a class="nav-link" href="users/registration">Регистрация</a></li>
                 </#if>
             </ul>
         </div>

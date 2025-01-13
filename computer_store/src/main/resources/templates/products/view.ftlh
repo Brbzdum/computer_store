@@ -19,8 +19,8 @@
             <p><strong>Описание:</strong> ${product.description! 'Описание отсутствует'}</p>
             <p><strong>Цена:</strong> ${product.price! '0.00'} ₽</p>
             <p><strong>Количество на складе:</strong> ${product.stock! '0'}</p>
-            <form action="/cart/add" method="post" class="mt-3">
-                <input type="hidden" name="productId" value="${product.id! ''}"/>
+            <form action="/products/${product.id}/add-to-cart" method="post" class="mt-2">
+                <input type="hidden" name="quantity" value="1" />
                 <button type="submit" class="btn btn-success">Добавить в корзину</button>
             </form>
             <a href="/products" class="btn btn-secondary mt-3">Вернуться к списку товаров</a>

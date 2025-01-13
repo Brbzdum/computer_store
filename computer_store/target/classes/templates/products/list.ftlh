@@ -12,10 +12,10 @@
                             <h5 class="card-title">${product.title! 'Название товара'}</h5>
                             <p class="card-text">Цена: ${product.price! '0.00'} ₽</p>
                             <a href="/products/${product.id}" class="btn btn-primary">Подробнее</a>
-                            <form action="/cart/add" method="post" class="mt-2">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
-                                <input type="hidden" name="productId" value="${product.id! ''}"/>
+                            <form action="/products/${product.id}/add-to-cart" method="post" class="mt-2">
+                                <input type="hidden" name="quantity" value="1" />
                                 <button type="submit" class="btn btn-success">Добавить в корзину</button>
+                            </form>
                             </form>
                         </div>
                     </div>

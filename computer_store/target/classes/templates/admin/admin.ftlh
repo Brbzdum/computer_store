@@ -21,13 +21,12 @@
                     <td>${user.email! 'example@mail.com'}</td>
                     <td>
                         <#list user.roles as role>
-                            ${role.name! ''}
+                            ${role!''}
                         </#list>
                     </td>
                     <td>${user.active?string("Активен", "Забанен")}</td>
                     <td>
                         <form action="/admin/user/ban/${user.id}" method="post" style="display:inline;">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                             <button type="submit" class="btn btn-warning btn-sm">
                                 ${user.active?string("Забанить", "Разбанить")}
                             </button>
@@ -48,7 +47,6 @@
             <tr>
                 <th>Название</th>
                 <th>Цена</th>
-                <th>Категория</th>
                 <th>Производитель</th>
                 <th>Действия</th>
             </tr>
@@ -58,12 +56,10 @@
                 <tr>
                     <td>${product.name! 'Название'}</td>
                     <td>${product.price! '0'} ₽</td>
-                    <td>${product.category.name! 'Категория'}</td>
                     <td>${product.manufacturer.name! 'Производитель'}</td>
                     <td>
                         <a href="/admin/product/edit/${product.id}" class="btn btn-primary btn-sm">Редактировать</a>
                         <form action="/admin/product/delete/${product.id}" method="post" style="display:inline;">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Вы уверены?')">Удалить</button>
                         </form>
                     </td>

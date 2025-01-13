@@ -20,7 +20,6 @@
                     <td>${item.quantity}</td>
                     <td>
                         <form action="/cart/remove" method="post" style="display:inline;">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                             <input type="hidden" name="productId" value="${item.product.id}"/>
                             <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
                         </form>
@@ -31,7 +30,6 @@
         </table>
         <div class="text-center mt-4">
             <form action="/cart/checkout" method="post">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token! ''}"/>
                 <button type="submit" class="btn btn-success btn-lg w-100">Оформить заказ</button>
             </form>
         </div>

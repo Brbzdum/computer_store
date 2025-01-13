@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         .username(user.getEmail())
                         .password(user.getPassword())
                         .authorities(user.getRoles().stream()
-                                .map(role -> "ROLE_" + role.name())
+                                .map(Enum::name)
                                 .toArray(String[]::new))
                         .accountLocked(!user.isActive()) // Заблокирован, если не активен
                         .build())

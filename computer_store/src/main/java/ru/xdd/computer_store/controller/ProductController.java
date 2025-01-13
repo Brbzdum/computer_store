@@ -28,13 +28,18 @@ public class ProductController {
     }
 
     @GetMapping
-    public String listProducts(Model model) {
+    public String listProducts(Model model, Principal principal ) {
         List<Product> products = productService.getAllProducts();
         List<Manufacturer> manufacturers = productService.getAllManufacturers();
 
         model.addAttribute("content", "products/list.ftlh");
         model.addAttribute("products", products);
         model.addAttribute("manufacturers", manufacturers);
+
+        if (principal != null) {
+            User currentUser = userService.getUserByPrincipal(principal);
+            model.addAttribute("user", currentUser);
+        }
         return "layout";
     }
 
@@ -62,6 +67,7 @@ public class ProductController {
 
         return "redirect:/cart"; // Перенаправляем на страницу корзины
     }
+
 }
 
 

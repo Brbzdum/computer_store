@@ -45,6 +45,7 @@ public class EmailService {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content, true); // Поддержка HTML
+            helper.setFrom("ebalrotkotlina@mail.ru"); // Установите правильного отправителя
 
             mailSender.send(mimeMessage);
             log.info("Email отправлен на адрес: {}", to);
@@ -53,4 +54,5 @@ public class EmailService {
             throw new IllegalStateException("Ошибка отправки email", e);
         }
     }
+
 }

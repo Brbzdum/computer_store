@@ -3,12 +3,12 @@ package ru.xdd.computer_store.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.xdd.computer_store.model.Cart;
-import ru.xdd.computer_store.model.CartItem;
-import ru.xdd.computer_store.model.Product;
-import ru.xdd.computer_store.model.User;
+import ru.xdd.computer_store.model.*;
 import ru.xdd.computer_store.repository.CartRepository;
 import ru.xdd.computer_store.repository.ProductRepository;
+import ru.xdd.computer_store.repository.SaleRepository;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +16,7 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
+    private final SaleRepository saleRepository;
 
     public Cart getCartByUser(User user) {
         return cartRepository.findByUser(user)
@@ -57,7 +58,11 @@ public class CartService {
     public void checkoutCart(User user) {
         Cart cart = getCartByUser(user);
 
-        // Проверяем, что всех товаров хватает на складе
+        if (cart.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Корзина пуста");
+        }
+
+        // Проверяем наличие товаров на складе
         for (CartItem item : cart.getItems()) {
             Product product = item.getProduct();
             if (product.getStock() < item.getQuantity()) {
@@ -65,11 +70,26 @@ public class CartService {
             }
         }
 
-        // Уменьшаем остатки и очищаем корзину
+        // Уменьшаем запасы и создаём записи о продажах
         for (CartItem item : cart.getItems()) {
             Product product = item.getProduct();
-            product.setStock(product.getStock() - item.getQuantity());
+            int quantity = item.getQuantity();
+
+            // Уменьшаем запас товара
+            product.setStock(product.getStock() - quantity);
             productRepository.save(product);
+
+            // Создаём запись о продаже
+            Sale sale = new Sale();
+            sale.setProduct(product);
+            sale.setBuyer(user);
+            sale.setManufacturer(product.getManufacturer());
+            sale.setSalePrice(product.getPrice());
+            sale.setPurchasePrice(product.getPurchasePrice());
+            sale.setSaleDate(LocalDateTime.now());
+            sale.setQuantity(quantity);
+
+            saleRepository.save(sale);
         }
 
         // Очищаем корзину

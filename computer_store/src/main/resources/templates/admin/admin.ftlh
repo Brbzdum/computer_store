@@ -21,7 +21,7 @@
                     <td>${user.email! 'example@mail.com'}</td>
                     <td>
                         <#list user.roles as role>
-                            ${role.name! ''}
+                            ${role!''}
                         </#list>
                     </td>
                     <td>${user.active?string("Активен", "Забанен")}</td>
@@ -47,7 +47,6 @@
             <tr>
                 <th>Название</th>
                 <th>Цена</th>
-                <th>Категория</th>
                 <th>Производитель</th>
                 <th>Действия</th>
             </tr>
@@ -57,7 +56,6 @@
                 <tr>
                     <td>${product.name! 'Название'}</td>
                     <td>${product.price! '0'} ₽</td>
-                    <td>${product.category.name! 'Категория'}</td>
                     <td>${product.manufacturer.name! 'Производитель'}</td>
                     <td>
                         <a href="/admin/product/edit/${product.id}" class="btn btn-primary btn-sm">Редактировать</a>
