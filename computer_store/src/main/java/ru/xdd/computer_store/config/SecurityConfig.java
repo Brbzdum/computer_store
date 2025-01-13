@@ -26,9 +26,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/profile/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/users/profile/**", "/cart/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/users/**", "/products/**", "/cart/**","/users/activate/**", "/manufacturers/**", "/login", "/registration", "/403").permitAll()
+                        .requestMatchers("/users/login", "/users/registration", "/users/activate/**", "/products/**", "/manufacturers/**", "/403").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -36,7 +36,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login") // Обработчик логина
                         .usernameParameter("email") // Указываем, что поле для имени пользователя - это email
                         .passwordParameter("password") // Поле для пароля остаётся стандартным
-                        .defaultSuccessUrl("/", true) // Перенаправление после успешного логина
+                        .defaultSuccessUrl("/products", true) // Перенаправление после успешного логина
                         .failureUrl("/users/login?error=true") // Перенаправление при ошибке логина
                         .permitAll()
                 )
