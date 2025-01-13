@@ -54,7 +54,7 @@
             <tbody>
             <#list products as product>
                 <tr>
-                    <td>${product.name! 'Название'}</td>
+                    <td>${product.title! 'Название'}</td>
                     <td>${product.price! '0'} ₽</td>
                     <td>${product.manufacturer.name! 'Производитель'}</td>
                     <td>

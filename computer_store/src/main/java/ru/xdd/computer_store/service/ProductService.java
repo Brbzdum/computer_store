@@ -12,6 +12,7 @@ import ru.xdd.computer_store.repository.ProductRepository;
 
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,24 +50,23 @@ public class ProductService {
 
 
     @Transactional
-    public void saveProductWithImages(Product product, MultipartFile mainImageFile, MultipartFile[] additionalImageFiles) throws IOException {
-        if (!mainImageFile.isEmpty()) {
-            product.setMainImage(mainImageFile.getBytes());
-        }
-
-        if (additionalImageFiles != null && additionalImageFiles.length > 0) {
-            List<byte[]> additionalImages = new ArrayList<>();
-            for (MultipartFile file : additionalImageFiles) {
-                additionalImages.add(file.getBytes());
+    public void saveProductWithImage(Product product, MultipartFile mainImageFile) throws IOException {
+        try {
+            if (!mainImageFile.isEmpty()) {
+                product.setMainImage(mainImageFile.getBytes());
             }
-            product.setAdditionalImages(convertImagesToJson(additionalImages));
+            productRepository.save(product);
+            log.info("Транзакция выполнена успешно.");
+        } catch (Exception e) {
+            log.error("Ошибка: транзакция откатывается.", e);
+            throw e; // Убедитесь, что исключение не подавляется
         }
-
-        productRepository.save(product);
     }
 
+
+
     @Transactional
-    public void updateProductWithImages(Long id, Product updatedProduct, MultipartFile mainImageFile, MultipartFile[] additionalImageFiles) throws IOException {
+    public void updateProductWithImage(Long id, Product updatedProduct, MultipartFile mainImageFile) throws IOException {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Товар не найден"));
 
@@ -74,21 +74,17 @@ public class ProductService {
         existingProduct.setDescription(updatedProduct.getDescription());
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setPurchasePrice(updatedProduct.getPurchasePrice());
+        existingProduct.setStock(updatedProduct.getStock());
+        existingProduct.setManufacturer(updatedProduct.getManufacturer());
 
         if (!mainImageFile.isEmpty()) {
-            existingProduct.setMainImage(mainImageFile.getBytes());
+            existingProduct.setMainImage(mainImageFile.getBytes()); // Обновляем главное изображение
         }
 
-        if (additionalImageFiles != null && additionalImageFiles.length > 0) {
-            List<byte[]> additionalImages = new ArrayList<>();
-            for (MultipartFile file : additionalImageFiles) {
-                additionalImages.add(file.getBytes());
-            }
-            existingProduct.setAdditionalImages(convertImagesToJson(additionalImages));
-        }
-
-        productRepository.save(existingProduct);
+        productRepository.save(existingProduct); // Сохраняем изменения
     }
+
+
 
 
 

@@ -9,7 +9,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Data
 @Entity
 @Table(name = "manufacturers")
 public class Manufacturer {

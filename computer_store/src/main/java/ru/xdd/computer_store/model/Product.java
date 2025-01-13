@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,7 +13,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Data
 @Entity
 @Table(name = "products")
 @NoArgsConstructor
@@ -34,11 +34,9 @@ public class Product {
     @Column(name = "purchase_price", nullable = false)
     private BigDecimal purchasePrice; // Закупочная цена
 
-    @Lob
-    private byte[] mainImage; // Основное изображение (в формате байтов)
 
     @Lob
-    private byte[] additionalImages; // Дополнительные изображения (JSON или массив байтов)
+    private byte[] mainImage;
 
     @Column(nullable = false)
     private LocalDateTime createdAt; // Дата создания
@@ -59,4 +57,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sale> sales;
+
+
 }

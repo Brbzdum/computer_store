@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.xdd.computer_store.dto.ProductDto;
 import ru.xdd.computer_store.model.*;
 import ru.xdd.computer_store.repository.SaleRepository;
 import ru.xdd.computer_store.service.*;
@@ -42,22 +43,19 @@ public class AdminController {
     private final SaleRepository saleRepository;
 
     @GetMapping
-    public String adminPage(Model model, Principal principal,HttpServletRequest request) {
-        addCommonAttributes(model, principal,request);
+    public String adminPage(Model model, Principal principal) {
+        addCommonAttributes(model, principal);
         model.addAttribute("content", "admin/admin.ftlh");
         return "layout";
     }
 
-    private void addCommonAttributes(Model model, Principal principal, HttpServletRequest request) {
+    private void addCommonAttributes(Model model, Principal principal ) {
         model.addAttribute("user", userService.getUserByPrincipal(principal));
         model.addAttribute("users", userService.list());
         model.addAttribute("products", productService.getAllProducts());
         model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
         model.addAttribute("sales", saleService.list());
-        CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-        if (csrfToken != null) {
-            model.addAttribute("_csrf", csrfToken);
-        }
+
     }
 
 
@@ -80,19 +78,19 @@ public class AdminController {
      * Редактирование продукта.
      */
     @PostMapping("/product/edit/{id}")
-    public String editProduct(@PathVariable Long id,
-                              @RequestParam("mainImage") MultipartFile mainImageFile,
-                              @RequestParam("additionalImages") MultipartFile[] additionalImageFiles,
-                              @Valid @ModelAttribute Product product,
-                              BindingResult bindingResult,
-                              Model model) {
+    public String editProduct(
+            @PathVariable Long id,
+            @RequestParam("mainImage") MultipartFile mainImageFile,
+            @Valid @ModelAttribute Product product,
+            BindingResult bindingResult,
+            Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorMessage", "Некорректно заполнены поля");
             model.addAttribute("content", "admin/product-edit.ftlh");
             return "layout";
         }
         try {
-            productService.updateProductWithImages(id, product, mainImageFile, additionalImageFiles);
+            productService.updateProductWithImage(id, product, mainImageFile);
         } catch (IOException e) {
             model.addAttribute("errorMessage", "Ошибка при обновлении изображения");
             return "admin/product-edit";
@@ -113,32 +111,54 @@ public class AdminController {
     @PostMapping("/product/add")
     public String addProduct(
             @RequestParam("mainImage") MultipartFile mainImageFile,
-            @RequestParam("additionalImages") MultipartFile[] additionalImageFiles,
-            @Valid @ModelAttribute Product product,
+            @Valid @ModelAttribute ProductDto productDto,
             BindingResult bindingResult,
-            Model model,
-            Principal principal,HttpServletRequest request) {
-        logger.info("Получен POST-запрос на добавление продукта: {}", product.getTitle());
+            Model model) {
 
+        logger.info("Получен запрос на добавление товара: {}", productDto);
+
+        // Лог ошибок валидации
         if (bindingResult.hasErrors()) {
-            logger.warn("Ошибки валидации при добавлении продукта: {}", bindingResult.getAllErrors());
-            addCommonAttributes(model, principal,request);
+            logger.warn("Ошибки валидации: {}", bindingResult.getAllErrors());
+            model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
             model.addAttribute("errorMessage", "Некорректно заполнены поля");
-            model.addAttribute("content", "admin/product-add.ftlh");
             return "layout";
         }
+
         try {
-            productService.saveProductWithImages(product, mainImageFile, additionalImageFiles);
-            logger.info("Товар успешно сохранён: {}", product.getTitle());
+            Product product = new Product();
+            product.setTitle(productDto.getTitle());
+            product.setDescription(productDto.getDescription());
+            product.setPrice(productDto.getPrice());
+            product.setPurchasePrice(productDto.getPurchasePrice());
+            product.setStock(productDto.getStock());
+
+            Manufacturer manufacturer = manufacturerService.getManufacturerById(productDto.getManufacturerId())
+                    .orElseThrow(() -> new IllegalArgumentException("Производитель не найден"));
+            product.setManufacturer(manufacturer);
+
+            if (!mainImageFile.isEmpty()) {
+                product.setMainImage(mainImageFile.getBytes());
+            }
+
+            logger.info("Сохраняем товар: {}", product);
+            productService.saveProductWithImage(product, mainImageFile);
+            logger.info("Товар успешно сохранен!");
         } catch (IOException e) {
-            logger.error("Ошибка при сохранении изображения для продукта: {}", e.getMessage());
-            addCommonAttributes(model, principal, request);
+            logger.error("Ошибка при сохранении изображения: {}", e.getMessage());
             model.addAttribute("errorMessage", "Ошибка при сохранении изображения");
-            model.addAttribute("content", "admin/product-add.ftlh");
             return "layout";
         }
+
         return "redirect:/admin";
     }
+
+
+
+
+
+
+
 
 
     @GetMapping("/product/add")
