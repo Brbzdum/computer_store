@@ -35,8 +35,9 @@ public class Product {
     private BigDecimal purchasePrice; // Закупочная цена
 
 
-    @Lob
-    private byte[] mainImage;
+
+    @Column(name = "image_path") // Путь к файлу изображения
+    private String imagePath;
 
     @Column(nullable = false)
     private LocalDateTime createdAt; // Дата создания

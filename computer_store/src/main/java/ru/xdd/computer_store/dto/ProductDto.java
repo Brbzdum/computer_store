@@ -1,7 +1,6 @@
 package ru.xdd.computer_store.dto;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,26 +12,33 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ProductDto {
-    @NotEmpty(message = "Название не может быть пустым")
+    private Long id; // Добавьте поле ID для редактирования
+
+    @NotBlank(message = "Название не может быть пустым")
     private String title;
 
-    @NotEmpty(message = "Описание не может быть пустым")
+    @NotBlank(message = "Описание не может быть пустым")
     private String description;
 
     @NotNull(message = "Цена не может быть пустой")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Цена должна быть положительной")
     private BigDecimal price;
 
     @NotNull(message = "Закупочная цена не может быть пустой")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Закупочная цена должна быть положительной")
     private BigDecimal purchasePrice;
 
-    @NotNull(message = "Производитель обязателен")
+    @NotNull(message = "Запас не может быть пустым")
+    @Min(value = 0, message = "Запас не может быть отрицательным")
+    private Integer stock;
+
+    @NotNull(message = "Производитель должен быть выбран")
     private Long manufacturerId;
 
-    @NotNull(message = "Запас обязателен")
-    private int stock;
-
-    private MultipartFile mainImage;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
-}
+    private LocalDateTime createdAt; // Для отображения даты создания
 
+    private MultipartFile mainImageFile;
+
+    private String mainImageUrl;
+}

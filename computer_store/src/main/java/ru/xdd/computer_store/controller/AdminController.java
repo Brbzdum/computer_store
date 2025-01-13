@@ -80,38 +80,85 @@ public class AdminController {
     @PostMapping("/product/edit/{id}")
     public String editProduct(
             @PathVariable Long id,
-            @RequestParam("mainImage") MultipartFile mainImageFile,
-            @Valid @ModelAttribute Product product,
+            @Valid @ModelAttribute("productDto") ProductDto productDto,
             BindingResult bindingResult,
             Model model) {
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("errorMessage", "Некорректно заполнены поля");
+            model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
             model.addAttribute("content", "admin/product-edit.ftlh");
             return "layout";
         }
+
         try {
-            productService.updateProductWithImage(id, product, mainImageFile);
+            // Получение существующего продукта
+            Product existingProduct = productService.getProductById(id)
+                    .orElseThrow(() -> new IllegalArgumentException("Товар с ID " + id + " не найден"));
+
+            // Обновление полей продукта
+            existingProduct.setTitle(productDto.getTitle());
+            existingProduct.setDescription(productDto.getDescription());
+            existingProduct.setPrice(productDto.getPrice());
+            existingProduct.setPurchasePrice(productDto.getPurchasePrice());
+            existingProduct.setStock(productDto.getStock());
+
+            // Обновление производителя
+            Manufacturer manufacturer = manufacturerService.getManufacturerById(productDto.getManufacturerId())
+                    .orElseThrow(() -> new IllegalArgumentException("Производитель не найден"));
+            existingProduct.setManufacturer(manufacturer);
+
+            // Обработка загрузки изображения
+            MultipartFile mainImageFile = productDto.getMainImageFile();
+            productService.updateProductWithImage(existingProduct, mainImageFile);
         } catch (IOException e) {
+            logger.error("Ошибка при обновлении изображения: ", e);
             model.addAttribute("errorMessage", "Ошибка при обновлении изображения");
-            return "admin/product-edit";
+            model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
+            model.addAttribute("content", "admin/product-edit.ftlh");
+            return "layout";
+        } catch (IllegalArgumentException e) {
+            logger.error("Ошибка: ", e);
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
+            model.addAttribute("content", "admin/product-edit.ftlh");
+            return "layout";
         }
+
         return "redirect:/admin";
     }
 
+    /**
+     * Страница редактирования продукта.
+     */
     @GetMapping("/product/edit/{id}")
     public String editProductPage(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Товар с ID " + id + " не найден"));
-        model.addAttribute("product", product);
+
+        // Преобразование Product в ProductDto
+        ProductDto productDto = new ProductDto();
+        productDto.setId(product.getId());
+        productDto.setTitle(product.getTitle());
+        productDto.setDescription(product.getDescription());
+        productDto.setPrice(product.getPrice());
+        productDto.setPurchasePrice(product.getPurchasePrice());
+        productDto.setStock(product.getStock());
+        productDto.setManufacturerId(product.getManufacturer().getId());
+        productDto.setCreatedAt(product.getCreatedAt());
+        productDto.setMainImageUrl(product.getImagePath()); // Используем imagePath
+
+        model.addAttribute("productDto", productDto);
         model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
         model.addAttribute("content", "admin/product-edit.ftlh");
         return "layout";
     }
 
+
+
     @PostMapping("/product/add")
     public String addProduct(
-            @RequestParam("mainImage") MultipartFile mainImageFile,
-            @Valid @ModelAttribute ProductDto productDto,
+            @Valid @ModelAttribute("productDto") ProductDto productDto,
             BindingResult bindingResult,
             Model model) {
 
@@ -122,6 +169,7 @@ public class AdminController {
             logger.warn("Ошибки валидации: {}", bindingResult.getAllErrors());
             model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
             model.addAttribute("errorMessage", "Некорректно заполнены поля");
+            model.addAttribute("content", "admin/product-add.ftlh");
             return "layout";
         }
 
@@ -137,33 +185,28 @@ public class AdminController {
                     .orElseThrow(() -> new IllegalArgumentException("Производитель не найден"));
             product.setManufacturer(manufacturer);
 
-            if (!mainImageFile.isEmpty()) {
-                product.setMainImage(mainImageFile.getBytes());
-            }
-
-            logger.info("Сохраняем товар: {}", product);
+            MultipartFile mainImageFile = productDto.getMainImageFile();
             productService.saveProductWithImage(product, mainImageFile);
             logger.info("Товар успешно сохранен!");
         } catch (IOException e) {
             logger.error("Ошибка при сохранении изображения: {}", e.getMessage());
             model.addAttribute("errorMessage", "Ошибка при сохранении изображения");
+            model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
+            model.addAttribute("content", "admin/product-add.ftlh");
             return "layout";
         }
 
         return "redirect:/admin";
     }
 
-
-
-
-
-
-
-
-
+    /**
+     * Страница добавления нового продукта.
+     */
     @GetMapping("/product/add")
     public String addProductPage(Model model) {
-        model.addAttribute("product", new Product());
+        ProductDto productDto = new ProductDto();
+        productDto.setCreatedAt(LocalDateTime.now()); // Установка текущей даты создания, если необходимо
+        model.addAttribute("productDto", productDto);
         model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
         model.addAttribute("content", "admin/product-add.ftlh"); // Укажите путь к шаблону
         return "layout";

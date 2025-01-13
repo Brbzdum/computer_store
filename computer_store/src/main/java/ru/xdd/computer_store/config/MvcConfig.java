@@ -13,6 +13,8 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:C:/Users/vladi/IdeaProjects/computer_store/computer_store/uploads/");
     }
     @Bean
     public FreeMarkerConfigurer freeMarkerConfigurer() {
