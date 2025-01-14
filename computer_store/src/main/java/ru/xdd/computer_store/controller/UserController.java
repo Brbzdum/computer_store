@@ -28,15 +28,24 @@ public class UserController {
      * Страница входа.
      */
     @GetMapping("/login")
-    public String login(Principal principal, Model model) {
+    public String login(
+            @RequestParam(value = "error", required = false) String error,
+            Principal principal,
+            Model model) {
         if (principal != null) {
             model.addAttribute("user", userService.getUserByPrincipal(principal));
         } else {
             model.addAttribute("user", new User());
         }
+
+        if (error != null) {
+            model.addAttribute("errorMessage", "Неверный email или пароль. Пожалуйста, попробуйте снова.");
+        }
+
         model.addAttribute("content", "user/login.ftlh"); // Указываем путь к шаблону
         return "layout"; // Возвращаем базовый шаблон
     }
+
 
     /**
      * Профиль текущего пользователя.

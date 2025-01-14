@@ -45,7 +45,7 @@ public class User implements UserDetails {
 
     @Column(nullable = false, length = 1000)
     @NotBlank(message = "Пароль не может быть пустым")
-//    @Pattern(regexp = "^[A-Za-z0-9]{8,}$", message = "Пароль должен содержать минимум 8 символов и включать только цифры или латинские буквы")
+    @Pattern(regexp = "^[A-Za-z0-9]{8,}$", message = "Пароль должен содержать минимум 8 символов и включать только цифры или латинские буквы")
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
