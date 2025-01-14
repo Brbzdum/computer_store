@@ -1,47 +1,69 @@
-<!DOCTYPE html>
-<html lang="ru">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<head>
-    <title>Аналитика</title>
-</head>
-<body>
-<#include "../layout.ftlh">
 
-<div>
-    <h1>Аналитика</h1>
-    <form action="/admin/revenue" method="get" class="row g-3 mb-4">
-        <div class="col-md-6">
+
+<!-- Форма фильтрации по периоду -->
+<form action="/admin/analytics" method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-5">
             <label for="startDate" class="form-label">Начало периода</label>
-            <input type="datetime-local" class="form-control" id="startDate" name="startDate" required>
+            <input type="datetime-local" id="startDate" name="startDate" class="form-control" required>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             <label for="endDate" class="form-label">Конец периода</label>
-            <input type="datetime-local" class="form-control" id="endDate" name="endDate" required>
+            <input type="datetime-local" id="endDate" name="endDate" class="form-control" required>
         </div>
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Сформировать отчет</button>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Применить</button>
         </div>
-    </form>
-    <p><strong>Выручка:</strong> <span>${revenue! 0}</span> руб.</p>
+    </div>
+</form>
+<form action="/admin/analytics/exportExcel" method="get" class="mb-4">
+    <div class="row">
+        <div class="col-md-5">
+            <label for="startDate" class="form-label">Начало периода</label>
+            <input type="datetime-local" id="startDate" name="startDate" class="form-control">
+        </div>
+        <div class="col-md-5">
+            <label for="endDate" class="form-label">Конец периода</label>
+            <input type="datetime-local" id="endDate" name="endDate" class="form-control">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-success w-100">Экспорт в Excel</button>
+        </div>
+    </div>
+</form>
 
-    <section class="mt-5">
-        <h2>Популярные товары</h2>
-        <ul class="list-group mb-4">
-            <#list popularProducts as product>
-                <li class="list-group-item">${product.name! 'Товар'}</li>
-            </#list>
-        </ul>
-    </section>
+<h3>Популярные продукты</h3>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Продукт</th>
+        <th>Количество продаж</th>
+    </tr>
+    </thead>
+    <tbody>
+    <#list popularProducts as product>
+        <tr>
+            <td>${product[0]}</td>
+            <td>${product[1]}</td>
+        </tr>
+    </#list>
+    </tbody>
+</table>
 
-    <section class="mt-5">
-        <h2>Популярные производители</h2>
-        <ul class="list-group mb-4">
-            <#list manufacturerPopularity as entry>
-                <li class="list-group-item">${entry.key! 'Производитель'} (${entry.value! 0})</li>
-            </#list>
-        </ul>
-    </section>
-</div>
-</body>
-</html>
+<h3>Популярные производители</h3>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Производитель</th>
+        <th>Количество продаж</th>
+    </tr>
+    </thead>
+    <tbody>
+    <#list manufacturerPopularity as manufacturer>
+        <tr>
+            <td>${manufacturer[0]}</td>
+            <td>${manufacturer[1]}</td>
+        </tr>
+    </#list>
+    </tbody>
+</table>

@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.xdd.computer_store.config.DateUtils;
 import ru.xdd.computer_store.dto.ProductDto;
 import ru.xdd.computer_store.model.*;
 import ru.xdd.computer_store.repository.SaleRepository;
@@ -225,22 +226,33 @@ public class AdminController {
     }
 
     @GetMapping("/analytics")
-    public String analytics(Model model,Principal principal) {
+    public String analytics(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            Model model,
+            Principal principal
+    ) {
         addCommonAttributes(model, principal);
-        model.addAttribute("popularProducts", saleService.getPopularProducts());
-        model.addAttribute("manufacturerPopularity", saleService.getManufacturerPopularity());
-        model.addAttribute("content", "admin/admin-analytics.ftlh"); // Возвращаем страницу добавления
-        return "layout"; // Шаблон для аналитики
+
+
+        List<Object[]> popularProducts;
+        List<Object[]> manufacturerPopularity;
+
+        if (startDate != null && endDate != null) {
+            popularProducts = saleService.getPopularProductsByDateRange(startDate, endDate);
+            manufacturerPopularity = saleService.getManufacturerPopularityByDateRange(startDate, endDate);
+        } else {
+            popularProducts = saleService.getPopularProducts();
+            manufacturerPopularity = saleService.getManufacturerPopularity();
+        }
+
+        model.addAttribute("popularProducts", popularProducts);
+        model.addAttribute("manufacturerPopularity", manufacturerPopularity);
+        model.addAttribute("content", "admin/admin-analytics.ftlh");
+        return "layout";
     }
 
-//    @GetMapping("/revenue")
-//    public String revenue(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-//                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-//                          Model model) {
-//        BigDecimal revenue = saleService.calculateRevenue(startDate, endDate);
-//        model.addAttribute("revenue", revenue);
-//        return "admin-revenue"; // Шаблон для отчёта о выручке
-//    }
+
 
 
     @GetMapping("/exportExcel")
@@ -275,7 +287,7 @@ public class AdminController {
             row.createCell(2).setCellValue(sale.getBuyer().getEmail());
             row.createCell(3).setCellValue(sale.getPurchasePrice().doubleValue());
             row.createCell(4).setCellValue(sale.getSalePrice().doubleValue());
-            row.createCell(5).setCellValue(sale.getSaleDate().toString());
+            row.createCell(5).setCellValue(DateUtils.format(sale.getSaleDate()));
             row.createCell(6).setCellValue(profit);
         }
 
@@ -294,6 +306,64 @@ public class AdminController {
         workbook.close();
 
     }
+
+    @GetMapping("/analytics/exportExcel")
+    public void exportAnalyticsToExcel(
+            HttpServletResponse response,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+    ) throws IOException {
+        // Получаем данные
+        List<Object[]> popularProducts = (startDate != null && endDate != null)
+                ? saleService.getPopularProductsByDateRange(startDate, endDate)
+                : saleService.getPopularProducts();
+
+        List<Object[]> manufacturerPopularity = (startDate != null && endDate != null)
+                ? saleService.getManufacturerPopularityByDateRange(startDate, endDate)
+                : saleService.getManufacturerPopularity();
+
+        // Создаем Excel файл
+        Workbook workbook = new XSSFWorkbook();
+
+        // Лист для популярных продуктов
+        Sheet productSheet = workbook.createSheet("Популярные продукты");
+        Row productHeader = productSheet.createRow(0);
+        productHeader.createCell(0).setCellValue("Продукт");
+        productHeader.createCell(1).setCellValue("Количество продаж");
+
+        int productRowNum = 1;
+        for (Object[] product : popularProducts) {
+            Row row = productSheet.createRow(productRowNum++);
+            row.createCell(0).setCellValue((String) product[0]);
+            row.createCell(1).setCellValue((Long) product[1]);
+        }
+
+        // Лист для производителей
+        Sheet manufacturerSheet = workbook.createSheet("Популярные производители");
+        Row manufacturerHeader = manufacturerSheet.createRow(0);
+        manufacturerHeader.createCell(0).setCellValue("Производитель");
+        manufacturerHeader.createCell(1).setCellValue("Количество продаж");
+
+        int manufacturerRowNum = 1;
+        for (Object[] manufacturer : manufacturerPopularity) {
+            Row row = manufacturerSheet.createRow(manufacturerRowNum++);
+            row.createCell(0).setCellValue((String) manufacturer[0]);
+            row.createCell(1).setCellValue((Long) manufacturer[1]);
+        }
+
+        // Автоподстройка ширины колонок
+        for (int i = 0; i < 2; i++) {
+            productSheet.autoSizeColumn(i);
+            manufacturerSheet.autoSizeColumn(i);
+        }
+
+        // Настройки HTTP-ответа
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment; filename=analytics.xlsx");
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
     /**
      * Удаление продажи.
      */
@@ -321,12 +391,24 @@ public class AdminController {
      * Отображение всех продаж.
      */
     @GetMapping("/sales")
-    public String listSales(Model model, Principal principal) {
-        model.addAttribute("sales", saleService.getAllSales());
+    public String listSales(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            Model model,
+            Principal principal
+    ) {
+        List<Sale> sales;
+        if (startDate != null && endDate != null) {
+            sales = saleRepository.findSalesByDateRange(startDate, endDate);
+        } else {
+            sales = saleService.getAllSales();
+        }
+        model.addAttribute("sales", sales);
         model.addAttribute("content", "admin/sales.ftlh");
-        addCommonAttributes(model, principal);// Возвращаем страницу добавления
+        addCommonAttributes(model, principal);
         return "layout";
     }
+
     /**
      * Список всех производителей (админка).
      */

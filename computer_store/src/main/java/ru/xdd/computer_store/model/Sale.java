@@ -3,6 +3,7 @@ package ru.xdd.computer_store.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.xdd.computer_store.config.DateUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,16 +44,10 @@ public class Sale {
     private int quantity; // Количество проданных единиц
 
 
-    @Transient // Это поле не нужно сохранять в базе данных
-    private String formattedSaleDate;
-
     public String getFormattedSaleDate() {
-        return formattedSaleDate;
+        return DateUtils.format(this.saleDate);
     }
 
-    public void setFormattedSaleDate(String formattedSaleDate) {
-        this.formattedSaleDate = formattedSaleDate;
-    }
 
 
 }

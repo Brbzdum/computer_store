@@ -114,7 +114,6 @@ public class UserController {
     public String listUserPurchases(Principal principal, Model model) {
         User buyer = userService.getUserByPrincipal(principal);
         List<Sale> purchases = saleService.getUserPurchases(buyer);
-        purchases.forEach(purchase -> purchase.setFormattedSaleDate(DateUtils.format(purchase.getSaleDate())));
         model.addAttribute("purchases", purchases);
         model.addAttribute("content", "user/purchases.ftlh"); // Указываем путь к шаблону
         return "layout"; // Возвращаем базовый шаблон

@@ -63,18 +63,21 @@ public class SaleService {
         saleRepository.save(sale);
     }
 
-    public Map<Product, Long> getPopularProducts() {
-        return saleRepository.findAll().stream()
-                .collect(Collectors.groupingBy(Sale::getProduct, Collectors.counting()));
+    public List<Object[]> getPopularProducts() {
+        return saleRepository.findPopularProducts();
     }
 
-
-
-    public Map<Manufacturer, Long> getManufacturerPopularity() {
-        return saleRepository.findAll().stream()
-                .collect(Collectors.groupingBy(sale -> sale.getProduct().getManufacturer(), Collectors.counting()));
+    public List<Object[]> getManufacturerPopularity() {
+        return saleRepository.findManufacturerPopularity();
     }
 
+    public List<Object[]> getPopularProductsByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return saleRepository.findPopularProductsByDateRange(startDate, endDate);
+    }
+
+    public List<Object[]> getManufacturerPopularityByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        return saleRepository.findManufacturerPopularityByDateRange(startDate, endDate);
+    }
     public BigDecimal calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
         return saleRepository.findAll().stream()
                 .filter(sale -> sale.getSaleDate().isAfter(startDate) && sale.getSaleDate().isBefore(endDate))
