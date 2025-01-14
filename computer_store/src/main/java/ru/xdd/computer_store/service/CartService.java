@@ -23,6 +23,8 @@ public class CartService {
                 .orElseGet(() -> createCartForUser(user));
     }
 
+
+
     @Transactional
     public void addItemToCart(User user, Long productId, int quantity) {
         Cart cart = getCartByUser(user);

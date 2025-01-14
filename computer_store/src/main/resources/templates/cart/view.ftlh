@@ -30,7 +30,7 @@
         </table>
         <div class="text-center mt-4">
             <form action="/cart/checkout" method="post">
-                <button type="submit" class="btn btn-success btn-lg w-100">Оформить заказ</button>
+                <button type="submit" class="btn btn-success btn-lg w-100">Купить</button>
             </form>
         </div>
     </#if>

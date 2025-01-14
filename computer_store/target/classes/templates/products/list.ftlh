@@ -23,3 +23,9 @@
         </#if>
     </div>
 </div>
+<style>
+    .card-img-top {
+        height: 350px; /* Фиксированная высота */
+        object-fit: cover; /* Пропорциональное заполнение области */
+    }
+</style>

@@ -23,13 +23,18 @@ public class EmailService {
      * @param activationLink Ссылка для активации
      */
     public void sendActivationEmail(String recipientEmail, String activationLink) {
-        String subject = "Активация аккаунта";
+        String subject = "Активация вашего аккаунта в Komputer Shop";
         String message = "<p>Здравствуйте!</p>" +
-                "<p>Для активации вашего аккаунта, перейдите по <a href='" + activationLink + "'>этой ссылке</a>.</p>" +
-                "<p>С уважением, команда <strong>Компьютерный магазин Komputer Shop</strong>.</p>";
+                "<p>Добро пожаловать в <strong>Komputer Shop</strong>!</p>" +
+                "<p>Для активации вашего аккаунта, пожалуйста, нажмите на следующую ссылку:</p>" +
+                "<p><a href='" + activationLink + "' style='color: #4CAF50; text-decoration: none;'>Активировать аккаунт</a></p>" +
+                "<p>Если вы не регистрировались в нашем магазине, просто проигнорируйте это письмо.</p>" +
+                "<br>" +
+                "<p>С уважением,<br>Команда <strong>Komputer Shop</strong>.</p>";
 
         sendEmail(recipientEmail, subject, message);
     }
+
 
     /**
      * Отправка email с кастомным содержимым.
