@@ -44,8 +44,8 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(content, true); // Поддержка HTML
-            helper.setFrom("ebalrotkotlina@mail.ru"); // Установите правильного отправителя
+            helper.setText(content, true);
+            helper.setFrom("xdvlb@mail.ru");
 
             mailSender.send(mimeMessage);
             log.info("Email отправлен на адрес: {}", to);
