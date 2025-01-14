@@ -43,5 +43,17 @@ public class Sale {
     private int quantity; // Количество проданных единиц
 
 
+    @Transient // Это поле не нужно сохранять в базе данных
+    private String formattedSaleDate;
+
+    public String getFormattedSaleDate() {
+        return formattedSaleDate;
+    }
+
+    public void setFormattedSaleDate(String formattedSaleDate) {
+        this.formattedSaleDate = formattedSaleDate;
+    }
+
+
 }
 

@@ -132,7 +132,7 @@ public class AdminController {
      * Страница редактирования продукта.
      */
     @GetMapping("/product/edit/{id}")
-    public String editProductPage(@PathVariable Long id, Model model) {
+    public String editProductPage(@PathVariable Long id, Model model,Principal principal) {
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Товар с ID " + id + " не найден"));
 
@@ -149,6 +149,7 @@ public class AdminController {
         productDto.setMainImageUrl(product.getImagePath()); // Используем imagePath
 
         model.addAttribute("productDto", productDto);
+        addCommonAttributes(model, principal);
         model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
         model.addAttribute("content", "admin/product-edit.ftlh");
         return "layout";
@@ -203,9 +204,10 @@ public class AdminController {
      * Страница добавления нового продукта.
      */
     @GetMapping("/product/add")
-    public String addProductPage(Model model) {
+    public String addProductPage(Model model, Principal principal) {
         ProductDto productDto = new ProductDto();
         productDto.setCreatedAt(LocalDateTime.now()); // Установка текущей даты создания, если необходимо
+        addCommonAttributes(model, principal);
         model.addAttribute("productDto", productDto);
         model.addAttribute("manufacturers", manufacturerService.getAllManufacturers());
         model.addAttribute("content", "admin/product-add.ftlh"); // Укажите путь к шаблону
@@ -223,7 +225,8 @@ public class AdminController {
     }
 
     @GetMapping("/analytics")
-    public String analytics(Model model) {
+    public String analytics(Model model,Principal principal) {
+        addCommonAttributes(model, principal);
         model.addAttribute("popularProducts", saleService.getPopularProducts());
         model.addAttribute("manufacturerPopularity", saleService.getManufacturerPopularity());
         model.addAttribute("content", "admin/admin-analytics.ftlh"); // Возвращаем страницу добавления
@@ -289,6 +292,7 @@ public class AdminController {
         response.setHeader("Content-Disposition", "attachment; filename=sales.xlsx");
         workbook.write(response.getOutputStream());
         workbook.close();
+
     }
     /**
      * Удаление продажи.
@@ -317,18 +321,32 @@ public class AdminController {
      * Отображение всех продаж.
      */
     @GetMapping("/sales")
-    public String listSales(Model model) {
+    public String listSales(Model model, Principal principal) {
         model.addAttribute("sales", saleService.getAllSales());
-        return "admin/sales"; // Шаблон для отображения всех продаж
+        model.addAttribute("content", "admin/sales.ftlh");
+        addCommonAttributes(model, principal);// Возвращаем страницу добавления
+        return "layout";
     }
-
+    /**
+     * Список всех производителей (админка).
+     */
+    @GetMapping("/manufacturers")
+    public String getAllManufacturers(Model model,Principal principal) {
+        List<Manufacturer> manufacturers = manufacturerService.getAllManufacturers();
+        addCommonAttributes(model, principal);
+        model.addAttribute("manufacturers", manufacturers);
+        model.addAttribute("content", "admin/manufacturers.ftlh"); // Указываем путь к шаблону
+        return "layout"; // Возвращаем базовый шаблон
+    }
     /**
      * Страница добавления нового производителя.
      */
     @GetMapping("/manufacturers/add")
-    public String addManufacturerPage(Model model) {
+    public String addManufacturerPage(Model model,Principal principal) {
+        addCommonAttributes(model, principal);
         model.addAttribute("manufacturer", new Manufacturer());
-        return "admin/manufacturer-add";
+        model.addAttribute("content", "admin/manufacturer-add.ftlh");
+        return "layout";
     }
 
     /**
@@ -344,11 +362,13 @@ public class AdminController {
      * Страница редактирования производителя.
      */
     @GetMapping("/manufacturers/edit/{id}")
-    public String editManufacturerPage(@PathVariable Long id, Model model) {
+    public String editManufacturerPage(@PathVariable Long id, Model model,Principal principal) {
         Manufacturer manufacturer = manufacturerService.getManufacturerById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Производитель не найден с ID: " + id));
         model.addAttribute("manufacturer", manufacturer);
-        return "admin/manufacturer-edit";
+        model.addAttribute("content", "admin/manufacturer-edit.ftlh");
+        addCommonAttributes(model, principal);
+        return "layout";
     }
 
     /**

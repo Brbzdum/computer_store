@@ -17,10 +17,10 @@
         <#list sales as sale>
             <tr>
                 <td>${sale.id}</td>
-                <td>${sale.product.name}</td>
+                <td>${sale.product.title}</td>
                 <td>${sale.buyer.email}</td>
                 <td>${sale.salePrice} ₽</td>
-                <td>${sale.saleDate}</td>
+                <td>${sale.formattedSaleDate! 'Дата не указана'}</td>
                 <td>${sale.salePrice - sale.purchasePrice} ₽</td>
                 <td>
                     <form action="/admin/sales/delete" method="post" style="display:inline;">

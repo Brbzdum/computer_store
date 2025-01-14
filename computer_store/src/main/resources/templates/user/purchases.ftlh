@@ -15,10 +15,10 @@
             <tbody>
             <#list purchases as purchase>
                 <tr>
-                    <td>${purchase.product.title}</td>
+                    <td>${purchase.product.title! 'Без названия'}</td>
                     <td>${purchase.quantity}</td>
-                    <td>${purchase.totalPrice} ₽</td>
-                    <td>${purchase.date}</td>
+                    <td>${purchase.salePrice! 0} ₽</td>
+                    <td>${purchase.formattedSaleDate! 'Дата не указана'}</td>
                 </tr>
             </#list>
             </tbody>

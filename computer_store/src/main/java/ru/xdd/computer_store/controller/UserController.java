@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.xdd.computer_store.config.DateUtils;
 import ru.xdd.computer_store.model.Sale;
 import ru.xdd.computer_store.model.User;
 import ru.xdd.computer_store.service.SaleService;
@@ -113,6 +114,7 @@ public class UserController {
     public String listUserPurchases(Principal principal, Model model) {
         User buyer = userService.getUserByPrincipal(principal);
         List<Sale> purchases = saleService.getUserPurchases(buyer);
+        purchases.forEach(purchase -> purchase.setFormattedSaleDate(DateUtils.format(purchase.getSaleDate())));
         model.addAttribute("purchases", purchases);
         model.addAttribute("content", "user/purchases.ftlh"); // Указываем путь к шаблону
         return "layout"; // Возвращаем базовый шаблон

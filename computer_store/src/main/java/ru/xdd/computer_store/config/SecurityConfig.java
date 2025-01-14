@@ -26,9 +26,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/users/profile/**", "/cart/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/users/login", "/users/registration", "/users/activate/**", "/products/**", "/manufacturers/**", "/403").permitAll()
+                        .requestMatchers("/users/profile/**", "/cart/**", "/manufacturers/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/manufacturers").permitAll()
+                        .requestMatchers("/users/login", "/users/registration", "/users/activate/**", "/products/**", "/403").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -55,8 +55,10 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        builder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
+        AuthenticationManagerBuilder builder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        builder.userDetailsService(customUserDetailsService)
+                .passwordEncoder(passwordEncoder());
         return builder.build();
     }
 
@@ -65,4 +67,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(10); // Степень сложности
     }
 }
-

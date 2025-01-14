@@ -28,9 +28,11 @@ public class CartController {
         }
         User user = userService.getUserByPrincipal(principal);
         Cart cart = cartService.getCartByUser(user);
+        model.addAttribute("user", user); // Добавляем пользователя в модель
         model.addAttribute("cart", cart);
         model.addAttribute("cartItemCount", cart.getItems().size());
         model.addAttribute("content", "cart/view.ftlh");
+
         return "layout";
     }
 
@@ -60,6 +62,7 @@ public class CartController {
         }
     }
 }
+
 
 
 

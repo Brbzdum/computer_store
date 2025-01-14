@@ -50,8 +50,12 @@ public class ProductService {
     }
 
     public List<Product> getProductsByManufacturerId(Long manufacturerId) {
-        return productRepository.findByManufacturerId(manufacturerId);
+        log.info("Fetching products for manufacturerId: {}", manufacturerId);
+        List<Product> products = productRepository.findByManufacturerId(manufacturerId);
+        log.info("Found products: {}", products);
+        return products;
     }
+
 
     @Transactional
     public void saveProductWithImage(Product product, MultipartFile mainImageFile) throws IOException {

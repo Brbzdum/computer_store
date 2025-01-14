@@ -22,11 +22,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/products">Товары</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/manufacturers">Производители</a>
+                </li>
                 <#if user?has_content && user.roles?seq_contains("ROLE_ADMIN")>
                     <li class="nav-item"><a class="nav-link" href="/admin">Админ Панель</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/users">Пользователи</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/products">Управление Товарами</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/admin/categories">Категории</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin/manufacturers">Производители</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin/sales">Продажи</a></li>
                     <li class="nav-item"><a class="nav-link" href="/admin/analytics">Аналитика</a></li>
@@ -36,15 +36,12 @@
                 <!-- Корзина -->
                 <#if user?has_content>
                     <li class="nav-item">
-                        <a class="nav-link" href="/cart">
-                            Корзина
-                            <#if cartItemCount?? && cartItemCount > 0>
-                                (<span>${cartItemCount}</span>)
-                            </#if>
+                        <a class="nav-link position-relative" href="/cart">
+                            <i class="bi bi-cart-fill"></i> Корзина
+
                         </a>
                     </li>
                 </#if>
-                <!-- Профиль и выход -->
                 <#if user?has_content>
                     <li class="nav-item"><a class="nav-link" href="/users/profile">Профиль</a></li>
                     <li class="nav-item">
